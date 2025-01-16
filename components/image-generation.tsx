@@ -11,6 +11,7 @@ export function ImageGeneration() {
   const [image, setImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPrompt, setShowPrompt] = useState(false) // State to toggle prompt visibility
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -64,16 +65,25 @@ export function ImageGeneration() {
 
       {image && (
         <Card className="p-4">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt="Generated image"
-            width={512}
-            height={512}
-            className="rounded-lg mx-auto"
-          />
+          <div className="text-center">
+            <Image
+              src={image || "/placeholder.svg"}
+              alt="Generated image"
+              width={384}
+              height={384}
+              className="rounded-lg mx-auto"
+            />
+            {/* Download Button */}
+            <a
+              href={image}
+              download="generated-image.png"
+              className="mt-4 inline-block bg-secondary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition"
+            >
+              Download Image
+            </a>
+          </div>
         </Card>
       )}
     </div>
   )
 }
-

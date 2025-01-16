@@ -62,8 +62,8 @@ export function Chat() {
   }  
 
   return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-12rem)]">
-      <Card className="flex-1">
+    <div className="flex flex-col gap-4 h-[calc(95vh-12rem)]">
+      <Card className="flex-1 w-full overflow-hidden">  
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-6 p-4">
             {messages.map((message, i) => (
