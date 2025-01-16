@@ -10,7 +10,7 @@ app0 is a minimalist web application for interacting with AI models through text
 
 ## Screenshot
 
-![AI Platform](Preview.png)
+![AI Platform](page-preview.png)
 
 ## Getting Started
 
