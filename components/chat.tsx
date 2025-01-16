@@ -20,39 +20,46 @@ export function Chat() {
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-
-    const newMessage: Message = { role: 'user', content: input }
-    setMessages(prev => [...prev, newMessage])
-    setInput('')
-    setIsLoading(true)
-
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+  
+    // Create a message object preserving the exact input
+    const newMessage: Message = { role: 'user', content: input };
+    setMessages((prev) => [...prev, newMessage]);
+    setInput('');
+    setIsLoading(true);
+  
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
-      })
-
+        body: JSON.stringify({ message: input }), // Send input with line breaks
+      });
+  
       if (!response.ok) {
-        throw new Error('Failed to get response')
+        throw new Error('Failed to get response');
       }
-
-      const data = await response.json()
-
+  
+      const data = await response.json();
+  
       if (data.error) {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
-
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
+  
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: data.response },
+      ]);
     } catch (error) {
-      console.error('Error:', error)
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }])
+      console.error('Error:', error);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' },
+      ]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  }  
 
   return (
     <div className="flex flex-col gap-4 h-[calc(100vh-12rem)]">
@@ -67,7 +74,7 @@ export function Chat() {
                 <div
                   className={`flex items-start gap-3 max-w-[80%] rounded-lg p-4 ${
                     message.role === 'user'
-                      ? 'bg-primary text-primary-foreground flex-row-reverse'
+                      ? 'bg-muted text-primary-backgorund flex-row-reverse'
                       : 'bg-muted'
                   }`}
                 >
@@ -112,10 +119,7 @@ export function Chat() {
         </ScrollArea>
       </Card>
 
-      <form 
-        onSubmit={handleSubmit} 
-        className="flex gap-2 items-end sticky bottom-0 bg-background p-4"
-      >
+        <form onSubmit={handleSubmit} className="flex gap-2 items-end sticky bottom-0 bg-background p-4">
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -128,7 +132,13 @@ export function Chat() {
             }
           }}
         />
-        <Button type="submit" size="icon" disabled={isLoading} className="h-[40px] w-[40px]">
+
+        <Button
+          type="submit"
+          size="icon"
+          disabled={isLoading}
+          className="h-full flex items-center justify-center px-4 bg-primary text-primary-foreground"
+        >
           <SendHorizontal className="h-5 w-5" />
           <span className="sr-only">Send message</span>
         </Button>
