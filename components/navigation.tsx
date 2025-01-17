@@ -26,7 +26,7 @@ export function Navigation() {
               Chat
             </Link>
             <Link 
-              href="/generate" 
+              href="/" 
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <Image className="w-4 h-4" />
