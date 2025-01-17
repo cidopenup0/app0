@@ -1,51 +1,61 @@
-'use client'
+'use client';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { Bot, User, SendHorizontal } from 'lucide-react'
-import { ScrollArea } from "@/components/ui/scroll-area"
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Card } from '@/components/ui/card';
+import { Bot, User, SendHorizontal } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
-  role: 'user' | 'assistant'
-  content: string
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 export function Chat() {
-  const [messages, setMessages] = useState<Message[]>([ ])
-  const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to the bottom of the chat
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Trigger scroll when messages are updated
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-  
-    // Create a message object preserving the exact input
+
     const newMessage: Message = { role: 'user', content: input };
     setMessages((prev) => [...prev, newMessage]);
     setInput('');
     setIsLoading(true);
-  
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }), // Send input with line breaks
+        body: JSON.stringify({ message: input }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to get response');
       }
-  
+
       const data = await response.json();
-  
+
       if (data.error) {
         throw new Error(data.error);
       }
-  
+
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: data.response },
@@ -59,11 +69,11 @@ export function Chat() {
     } finally {
       setIsLoading(false);
     }
-  }  
+  }
 
   return (
     <div className="flex flex-col gap-4 h-[calc(95vh-12rem)]">
-      <Card className="flex-1 w-full overflow-hidden">  
+      <Card className="flex-1 w-full overflow-hidden">
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-6 p-4">
             {messages.map((message, i) => (
@@ -74,13 +84,13 @@ export function Chat() {
                 <div
                   className={`flex items-start gap-3 max-w-[80%] rounded-lg p-4 ${
                     message.role === 'user'
-                      ? 'bg-muted text-primary-backgorund flex-row-reverse'
+                      ? 'bg-muted text-primary-background flex-row-reverse'
                       : 'bg-muted'
                   }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                      message.role === 'user' ? 'bg-primary-foreground/10' : 'bg-background'
+                      message.role === 'user' ? 'bg-secondary-foreground/10' : 'bg-secondary-foreground/10'
                     }`}
                   >
                     {message.role === 'assistant' ? (
@@ -105,7 +115,7 @@ export function Chat() {
             {isLoading && (
               <div className="flex justify-start">
                 <div className="flex items-start gap-3 max-w-[80%] rounded-lg p-4 bg-muted">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-background">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-secondary-foreground/10">
                     <Bot className="w-5 h-5" />
                   </div>
                   <div className="flex flex-col gap-1">
@@ -115,11 +125,12 @@ export function Chat() {
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
       </Card>
 
-        <form onSubmit={handleSubmit} className="flex gap-2 items-end sticky bottom-0 bg-background p-4">
+      <form onSubmit={handleSubmit} className="flex gap-2 items-end sticky bottom-0 bg-background p-4">
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -144,5 +155,5 @@ export function Chat() {
         </Button>
       </form>
     </div>
-  )
+  );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageSquare, Image, Binary } from 'lucide-react';
+import { MessageSquare, Image, Binary, HomeIcon } from 'lucide-react';
 import { FaDiscord } from 'react-icons/fa'; // Import Discord icon from react-icons
 import { ThemeToggle } from "./theme-toggle";
 
@@ -18,22 +18,29 @@ export function Navigation() {
             app0
           </Link>
           <div className="flex items-center gap-4">
-            <Link 
+          <Link 
               href="/" 
+              className="flex items-center gap-2 hover:text-primary transition-colors"
+            >
+              <HomeIcon className="w-4 h-4" />
+              Home
+            </Link>
+            <Link 
+              href="/chat" 
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               Chat
             </Link>
             <Link 
-              href="/" 
+              href="/image" 
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <Image className="w-4 h-4" />
               Generate Image
             </Link>            
             <ThemeToggle />
-            <div className="flex items-center gap-4">
+            {/* <div className="flex items-center gap-4">
               <a 
                 href="https://discord.com/users/1123900774670413856" // Replace with your Discord profile URL
                 target="_blank"
@@ -41,9 +48,9 @@ export function Navigation() {
                 className="hover:text-primary transition-colors"
                 title="Dev's Discord profile" // Tooltip text
               >
-                <FaDiscord className="w-5 h-5" /> {/* Use Discord icon from react-icons */}
+                <FaDiscord className="w-5 h-5" /> 
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
