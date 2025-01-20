@@ -47,7 +47,7 @@ export function ImageGeneration() {
           placeholder="Enter your image prompt..."
           className="flex-1"
         />
-        <Button type="submit" disabled={true}>
+        <Button type="submit" disabled={isLoading}>
           Generate
         </Button>
       </form>
