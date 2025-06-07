@@ -10,7 +10,7 @@ app0 is a minimalist web application for interacting with AI models through text
 
 ## Screenshot
 
-![AI Platform](preview.png)
+![app0 preview](preview.png)
 
 ## Getting Started
 
@@ -26,8 +26,8 @@ Ensure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/cidopenup/chat-imagine.git
-   cd chat-imagine
+   git clone https://github.com/cidopenup/app0.git
+   cd app0
    ```
 
 2. Install dependencies:
