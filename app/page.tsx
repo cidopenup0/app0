@@ -4,52 +4,55 @@ import { Button } from '@/components/ui/button';
 
 export function HomePage() {
   return (
-    <div className="bg-primary-background h-[calc(112vh-12rem)] flex flex-col justify-between">
-      <div>
-        <div className="max-w-3xl mx-auto px-7 sm:px-8">
-          <h1 className="text-4xl font-extrabold text-primary-background mb-6 text-center">Welcome to app0</h1>
-          <p className='text-lg text-primary-background mb-7 text-center'>Your AI Playground: Experiment and Discover</p>
-          <p className="text-lg text-primary-background mb-8 text-center">
-          Unlock the power of AI with app0. Whether it's creating captivating stories, analyzing intricate data, or fostering meaningful conversations, our AI tools are crafted to enhance your productivity and simplify your tasks. Every time you engage with the model, it generates unique responses without memory of earlier conversations or questions, ensuring a fresh perspective each time.
+    <div className="bg-primary-background min-h-screen flex flex-col justify-between">
+      <main className="flex-grow flex flex-col justify-center items-center px-6 py-12 sm:px-10">
+        <div className="max-w-4xl w-full text-center">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-primary mb-6">
+            Welcome to app0
+          </h1>
+          <p className="text-lg sm:text-xl text-muted-foreground mb-6">
+            Your AI Playground: Experiment and Discover
           </p>
-          <p className='text-lg text-primary-background mb-7 text-center'>
-          Keep in mind, the models do not retain any context from previous interactions, even if they were moments ago. Additionally, the models are not tailored to any specific user case, offering versatile solutions for diverse needs.
+          <p className="text-base sm:text-lg text-muted-foreground mb-6">
+            Unlock the power of AI with app0. Whether it’s creating captivating stories,
+            analyzing intricate data, or fostering meaningful conversations, our AI tools
+            enhance productivity and simplify your tasks.
           </p>
-          <div className="flex justify-center space-x-4">
+          <p className="text-base sm:text-lg text-muted-foreground mb-10">
+            Note: The models do not retain previous context. Each session is stateless,
+            offering fresh, versatile insights for every use.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button asChild>
-              <Link
-                href="/chat"
-                className="h-full flex items-center justify-center px-4 bg-primary text-primary-foreground"
-              >
-                <span>Chat with llama-3-70b-instruct </span>
-                <SquareArrowUpRight />
+              <Link href="/chat" className="flex items-center gap-2 px-6 py-3">
+                <span>Chat with llama-3-70b-instruct</span>
+                <SquareArrowUpRight size={18} />
               </Link>
             </Button>
             <Button asChild>
-              <Link
-                href="/image"
-                className="h-full flex items-center justify-center px-4 bg-primary text-primary-foreground"
-              >
-                <span>Generate Image with flux-schnell </span>
-                <SquareArrowUpRight />
+              <Link href="/image" className="flex items-center gap-2 px-6 py-3">
+                <span>Generate Image with flux-schnell</span>
+                <SquareArrowUpRight size={18} />
               </Link>
             </Button>
           </div>
         </div>
-      </div>
-      <footer className="text-center py-4">
-        <span>Made with ❤️ by </span>
+      </main>
+
+      <footer className="text-center py-6 border-t border-border text-sm text-muted-foreground">
+        Made with <span className="text-red-500">♥</span> by{' '}
         <Link
           href="https://discord.com/users/1123900774670413856"
-          className="text-blue-500 hover:underline"
           target="_blank"
           rel="noopener noreferrer"
+          className="text-blue-500 hover:underline"
         >
           cidopenup0
         </Link>
       </footer>
     </div>
   );
-};
+}
 
 export default HomePage;
