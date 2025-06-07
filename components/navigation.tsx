@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MessageSquare, Image, Binary, HomeIcon } from 'lucide-react';
-import { FaDiscord } from 'react-icons/fa';
+// import { FaDiscord } from 'react-icons/fa';
 import { ThemeToggle } from "./theme-toggle";
 
 export function Navigation() {
@@ -26,21 +26,18 @@ export function Navigation() {
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <HomeIcon className="w-4 h-4" />
-              Home
             </Link>
             <Link 
               href="/chat" 
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
-              Chat
             </Link>
             <Link 
               href="/image" 
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <Image className="w-4 h-4" />
-              Generate Image
             </Link>
 
             {/* Theme toggle */}
