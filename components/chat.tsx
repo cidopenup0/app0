@@ -176,13 +176,8 @@ export function Chat() {
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted'
                             }`}
-                          >
-                            <div className="text-sm font-medium mb-1">
-                              {message.role === 'assistant'
-                                ? modelOptions.find(m => m.id === selectedModel)?.name || 'AI'
-                                : 'You'}
-                            </div>
-                            <div className="text-sm leading-relaxed">
+                          > 
+                            <div className={`text-sm leading-relaxed break-all ${message.role === 'user' ? 'whitespace-pre-wrap' : ''}`}>
                               {message.role === 'assistant' ? (
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
                               ) : (
@@ -200,9 +195,6 @@ export function Chat() {
                             <Bot className="w-5 h-5 text-primary animate-pulse" />
                           </div>
                           <div className="rounded-lg p-4 bg-muted">
-                            <div className="text-sm font-medium mb-1">
-                              {modelOptions.find(m => m.id === selectedModel)?.name || 'AI'}
-                            </div>
                             <div className="flex items-center gap-2 text-sm">
                               <div className="flex gap-1">
                                 <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -226,7 +218,7 @@ export function Chat() {
 
       <div className="absolute bottom-0 left-0 w-full pointer-events-none">
         <div className="p-4 pb-0 pt-24 ">
-          <div className="pointer-events-auto"> {/* Re-enable pointer events for the form itself */}
+          <div className="pointer-events-auto">
             <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto">
               <div className="relative flex items-end bg-muted rounded-3xl border border-border/50 shadow-sm transition-all duration-200 min-h-[52px]">
                 {/* Model Selector Button */}
