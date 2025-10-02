@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SquareArrowUpRight, MessageSquare, Image, Zap, Binary, Sparkles } from 'lucide-react';
+import { SquareArrowUpRight, MessageSquare, Image, Zap, Binary, Sparkles, Heart} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -154,7 +154,7 @@ export function HomePage() {
 
       {/* Footer */}
       <footer className="text-center py-6 border-t border-border text-sm text-muted-foreground bg-muted/20">
-        Made with <span className="text-red-500">♥</span> by{' '}
+        Made with <span className="text-red-500"><Heart fill="red"  className='inline w-4 h-4' /></span> by{' '}
         <Link
           href="https://discord.com/users/1123900774670413856"
           target="_blank"
