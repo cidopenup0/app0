@@ -125,34 +125,33 @@ export function Chat() {
   }
 
   return (
-    <div className="relative flex flex-col h-[calc(100vh-5rem)]">
+    <div className="relative flex flex-col h-[calc(100vh-73px)]">
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          {/* Added padding-bottom to ensure the last message is visible above the floating form */}
-          <div className="flex justify-center p-6 pb-40">
-            <div className="w-[80vw] max-w-5xl">
-              <div className="flex flex-col gap-6">
+          <div className="flex justify-center min-h-full">
+            <div className="w-full max-w-5xl mx-auto px-4 sm:px-6">
+              <div className="flex flex-col min-h-[calc(100vh-73px)]">
                 {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                      <Bot className="w-8 h-8 text-muted-foreground" />
+                  <div className="flex flex-col items-center justify-center flex-1 text-center py-12">
+                    <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-6">
+                      <Bot className="w-10 h-10 text-muted-foreground" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Start a conversation</h3>
-                    <p className="text-muted-foreground mb-4 max-w-md">
+                    <h3 className="text-2xl font-semibold mb-3">Start a conversation</h3>
+                    <p className="text-muted-foreground mb-6 max-w-md text-lg">
                       Choose your AI model and ask anything. I'm here to help with questions, creative tasks, and more.
                     </p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Bot className="w-4 h-4" />
                       <span>Current model: {modelOptions.find(m => m.id === selectedModel)?.name}</span>
                       {modelOptions.find(m => m.id === selectedModel)?.badge && (
-                        <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+                        <Badge variant="secondary" className="text-xs px-2 py-1">
                           {modelOptions.find(m => m.id === selectedModel)?.badge}
                         </Badge>
                       )}
                     </div>
                   </div>
                 ) : (
-                  <>
+                  <div className="flex flex-col gap-6 py-6 pb-40">
                     {messages.map((message, i) => (
                       <div
                         key={i}
@@ -207,86 +206,85 @@ export function Chat() {
                         </div>
                       </div>
                     )}
-                  </>
+                    <div ref={messagesEndRef} />
+                  </div>
                 )}
-                <div ref={messagesEndRef} />
               </div>
             </div>
           </div>
         </ScrollArea>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full pointer-events-none">
-        <div className="p-4 pb-0 pt-24 ">
-          <div className="pointer-events-auto">
-            <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto">
-              <div className="relative flex items-end bg-muted rounded-3xl border border-border/50 shadow-sm transition-all duration-200 min-h-[52px]">
-                {/* Model Selector Button */}
-                <div className="absolute left-3 bottom-3 z-10">
-                  <Select value={selectedModel} onValueChange={setSelectedModel}>
-                    <SelectTrigger className="w-10 h-7 border-none bg-transparent p-0 hover:bg-muted-foreground/10 rounded-full flex items-center justify-center">
-                      <Bot className="w-4 h-4 text-muted-foreground" />
-                    </SelectTrigger>
-                    <SelectContent align="start" className="w-80">
-                      {modelOptions.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
-                          <div className="flex flex-col gap-1 py-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{model.name}</span>
-                              {model.badge && (
-                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
-                                  {model.badge}
-                                </Badge>
-                              )}
-                            </div>
-                            <span className="text-xs text-muted-foreground">{model.description}</span>
+      {/* Fixed Input at Bottom */}
+      <div className="border-t bg-background/80 backdrop-blur-sm">
+        <div className="container mx-auto max-w-5xl p-4">
+          <form onSubmit={handleSubmit}>
+            <div className="relative flex items-end bg-muted rounded-3xl border border-border/50 shadow-sm transition-all duration-200 min-h-[52px]">
+              {/* Model Selector Button */}
+              <div className="absolute left-3 bottom-3 z-10">
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                  <SelectTrigger className="w-10 h-7 border-none bg-transparent p-0 hover:bg-muted-foreground/10 rounded-full flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-muted-foreground" />
+                  </SelectTrigger>
+                  <SelectContent align="start" className="w-80">
+                    {modelOptions.map((model) => (
+                      <SelectItem key={model.id} value={model.id}>
+                        <div className="flex flex-col gap-1 py-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{model.name}</span>
+                            {model.badge && (
+                              <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+                                {model.badge}
+                              </Badge>
+                            )}
                           </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Message Input */}
-                <Textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = 'auto';
-                    target.style.height = Math.min(Math.max(target.scrollHeight, 24), 200) + 'px';
-                  }}
-                  placeholder="Ask anything..."
-                  className="flex-1 min-h-[52px] max-h-[200px] resize-none border-0 bg-transparent pl-14 pr-14 py-[14px] text-sm placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto no-scrollbar leading-6 flex items-center"
-                  rows={1}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(e);
-                    }
-                  }}
-                />
-
-                {/* Send Button */}
-                <div className="absolute right-3 bottom-3 z-10">
-                  <Button
-                    type="submit"
-                    size="sm"
-                    disabled={isLoading || !input.trim()}
-                    className={`rounded-full w-8 h-8 p-0 transition-all ${
-                      input.trim() && !isLoading
-                        ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                        : 'bg-muted-foreground/20 text-muted-foreground cursor-not-allowed'
-                    }`}
-                  >
-                    <Send className="h-4 w-4" />
-                    <span className="sr-only">Send message</span>
-                  </Button>
-                </div>
+                          <span className="text-xs text-muted-foreground">{model.description}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </form>
-          </div>
+
+              {/* Message Input */}
+              <Textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.min(Math.max(target.scrollHeight, 24), 200) + 'px';
+                }}
+                placeholder="Ask anything..."
+                className="flex-1 min-h-[52px] max-h-[200px] resize-none border-0 bg-transparent pl-14 pr-14 py-[14px] text-sm placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto no-scrollbar leading-6 flex items-center"
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+              />
+
+              {/* Send Button */}
+              <div className="absolute right-3 bottom-3 z-10">
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={isLoading || !input.trim()}
+                  className={`rounded-full w-8 h-8 p-0 transition-all ${
+                    input.trim() && !isLoading
+                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                      : 'bg-muted-foreground/20 text-muted-foreground cursor-not-allowed'
+                  }`}
+                >
+                  <Send className="h-4 w-4" />
+                  <span className="sr-only">Send message</span>
+                </Button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
