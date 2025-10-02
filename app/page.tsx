@@ -154,7 +154,7 @@ export function HomePage() {
 
       {/* Footer */}
       <footer className="text-center py-6 border-t border-border text-sm text-muted-foreground bg-muted/20">
-        Made with <span className="text-red-500"><Heart fill="red"  className='inline w-4 h-4' /></span> by{' '}
+        Made with <span className="text-red-500"><Heart fill="red" className='inline w-4 h-4' /></span> by{' '}
         <Link
           href="https://discord.com/users/1123900774670413856"
           target="_blank"
