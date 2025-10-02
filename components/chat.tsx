@@ -169,8 +169,8 @@ export function Chat() {
                               <User className="w-5 h-5 text-primary" />
                             )}
                           </div>
-                          <div className={`rounded-lg p-4 bg-muted`}>
-                            <div className={`text-sm leading-relaxed break-all ${message.role === 'user' ? 'whitespace-pre-wrap' : ''}`}>
+                          <div className={`rounded-lg p-4 bg-muted max-w-[70%]`}>
+                            <div className={`text-sm leading-relaxed break-words ${message.role === 'user' ? 'whitespace-pre-wrap ' : ''}`}>
                               {message.role === 'assistant' ? (
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
                               ) : (
