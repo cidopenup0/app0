@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sparkles, Download, Zap, Wand2, Loader2, ImageIcon, Copy, Heart, Bot } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
+import { Sparkles, Download, Wand2, Loader2, ImageIcon, Copy, Heart, Bot, Check } from "lucide-react"
 import Image from "next/image"
 
 // AI Models configuration
@@ -38,39 +38,7 @@ const aiModels = [
   }
 ]
 
-// Prompt suggestions by category
-const promptSuggestions = {
-  'Fantasy': [
-    'A mystical elven city built in ancient trees, glowing with magical light, ethereal atmosphere',
-    'A powerful dragon perched on a mountain peak, breathing fire into a stormy sky, epic fantasy art',
-    'A magical wizard casting spells in a library filled with floating books, mystical energy swirling around'
-  ],
-  'Sci-Fi': [
-    'A futuristic cityscape with flying cars and neon lights, cyberpunk aesthetic, rain-soaked streets',
-    'A sleek spaceship exploring an alien planet with multiple moons, detailed sci-fi concept art',
-    'A humanoid robot in a high-tech laboratory, chrome and blue lighting, futuristic design'
-  ],
-  'Nature': [
-    'A serene mountain lake reflecting snow-capped peaks, golden hour lighting, pristine wilderness',
-    'A dense ancient forest with rays of sunlight piercing through the canopy, mystical atmosphere',
-    'A dramatic waterfall cascading down rocky cliffs, surrounded by lush tropical vegetation'
-  ],
-  'Portrait': [
-    'A portrait of a wise elderly person with kind eyes, soft natural lighting, photorealistic style',
-    'A young warrior in medieval armor, determined expression, cinematic lighting',
-    'A mysterious figure in a hooded cloak, dramatic shadows, fantasy character portrait'
-  ],
-  'Abstract': [
-    'Swirling galaxies of vibrant colors merging into cosmic patterns, digital art style',
-    'Geometric shapes floating in space with neon gradients, modern abstract composition',
-    'Fluid liquid metal forms with rainbow reflections, surreal abstract art'
-  ],
-  'Architecture': [
-    'A grand Gothic cathedral with intricate stone details, dramatic lighting through stained glass',
-    'A modern minimalist house with glass walls overlooking the ocean, architectural photography',
-    'An ancient temple ruins overgrown with vines, atmospheric lighting, historical architecture'
-  ]
-}
+
 
 // Dynamic placeholder texts
 const placeholderTexts = [
@@ -90,7 +58,6 @@ export function ImageGeneration() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copySuccess, setCopySuccess] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedModel, setSelectedModel] = useState<string>('flux-schnell')
   const [usedPrompt, setUsedPrompt] = useState<string>('')
   const [usedModel, setUsedModel] = useState<string>('')
@@ -178,30 +145,37 @@ export function ImageGeneration() {
     }
   }
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setPrompt(suggestion)
-    // Scroll to the form and focus textarea after clicking a suggestion
-    setTimeout(() => {
-      const textarea = document.querySelector('textarea')
-      textarea?.focus()
-      const form = document.querySelector('form')
-      form?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
-  }
+
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
-      {/* Main Content */}
-      <div className="lg:col-span-2 space-y-8 order-2 lg:order-1">
+    <div className="max-w-4xl mx-auto">
+      <div className="space-y-8">
         {/* Generation Form */}
         <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-xl">
             <Wand2 className="w-5 h-5 text-primary" />
-            Describe Your Vision
+            Describe Your Vision <span className="text-xs text-muted-foreground">
+                  ({prompt.length}/500)
+                </span>
+                {prompt.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyPrompt}
+                    className="h-7 w-7 p-0"
+                  >
+                    {copySuccess ? (
+                      <Check className="w-3 h-3 text-green-500" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                  </Button>
+                )}
           </CardTitle>
           <CardDescription>
-            Enter a detailed description of the image you want to create. Be creative and specific!
+                
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -234,26 +208,6 @@ export function ImageGeneration() {
                   </div>
                 </div>
               )}
-              <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">
-                  {prompt.length}/500
-                </span>
-                {prompt.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCopyPrompt}
-                    className="h-7 w-7 p-0"
-                  >
-                    {copySuccess ? (
-                      <Heart className="w-3 h-3 text-green-500" />
-                    ) : (
-                      <Copy className="w-3 h-3" />
-                    )}
-                  </Button>
-                )}
-              </div>
             </div>
             
             <div className="flex items-center justify-between pt-2">
@@ -291,6 +245,7 @@ export function ImageGeneration() {
                   </>
                 ) : (
                   <>
+                    <Sparkles className="w-4 h-4 mr-2" />
                     Generate
                   </>
                 )}
@@ -416,78 +371,6 @@ export function ImageGeneration() {
             </CardContent>
           </Card>
         )}
-      </div>
-
-      {/* Right Sidebar */}
-      <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
-        {/* Prompt Suggestions */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm sticky top-4">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Sparkles className="w-5 h-5 text-primary" />
-              Get Inspired
-            </CardTitle>
-            <CardDescription>
-              Choose a category to explore prompts
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Category Selector */}
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a category..." />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(promptSuggestions).map((category) => (
-                  <SelectItem key={category} value={category}>
-                    <div className="flex items-center gap-2">
-                      {category === 'Fantasy' && <Wand2 className="w-3 h-3 text-purple-500" />}
-                      {category === 'Sci-Fi' && <Zap className="w-3 h-3 text-blue-500" />}
-                      {category === 'Nature' && <ImageIcon className="w-3 h-3 text-green-500" />}
-                      {category === 'Portrait' && <Heart className="w-3 h-3 text-pink-500" />}
-                      {category === 'Abstract' && <Sparkles className="w-3 h-3 text-yellow-500" />}
-                      {category === 'Architecture' && <Download className="w-3 h-3 text-gray-500" />}
-                      <span>{category}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Prompt Suggestions for Selected Category */}
-            {selectedCategory && (
-              <div className="space-y-2">
-                <h4 className="font-medium text-foreground text-sm flex items-center gap-2">
-                  {selectedCategory === 'Fantasy' && <Wand2 className="w-3 h-3 text-purple-500" />}
-                  {selectedCategory === 'Sci-Fi' && <Zap className="w-3 h-3 text-blue-500" />}
-                  {selectedCategory === 'Nature' && <ImageIcon className="w-3 h-3 text-green-500" />}
-                  {selectedCategory === 'Portrait' && <Heart className="w-3 h-3 text-pink-500" />}
-                  {selectedCategory === 'Abstract' && <Sparkles className="w-3 h-3 text-yellow-500" />}
-                  {selectedCategory === 'Architecture' && <Download className="w-3 h-3 text-gray-500" />}
-                  {selectedCategory} Prompts
-                </h4>
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {promptSuggestions[selectedCategory as keyof typeof promptSuggestions].map((suggestion, index) => (
-                    <Button
-                      key={index}
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full justify-start text-left h-auto p-2 hover:bg-accent/50 transition-all duration-200 group text-xs"
-                    >
-                      <div className="flex items-start gap-2 w-full">
-                        <Copy className="w-2.5 h-2.5 text-muted-foreground group-hover:text-primary flex-shrink-0 mt-0.5" />
-                        <span className="leading-relaxed text-muted-foreground group-hover:text-foreground">
-                          {suggestion}
-                        </span>
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   )
