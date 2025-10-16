@@ -1,18 +1,22 @@
 import Link from 'next/link';
-import { SquareArrowUpRight, MessageSquare, Image, Zap, Binary, Sparkles, Heart} from 'lucide-react';
+import { SquareArrowUpRight, MessageSquare, Image, Zap, Binary, Sparkles, Heart, MessageSquareText} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { DotScreenShader } from '@/components/ui/dot-shader-background'; 
 
 export function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <section className="flex-1 flex flex-col justify-center items-center px-6 py-16 sm:px-10 relative">
+        <div className= "absolute inset-0">
+          <DotScreenShader />
+        </div>
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-b from-muted/20 via-background to-background" />
+        {/* <div className="absolute inset-0 bg-gradient-to-b from-muted/20 via-background to-background" /> */}
         
-        <div className="max-w-4xl w-full text-center relative z-10">
+        <div className="max-w-3xl w-full text-center relative z-10">
           {/* Hero Badge */}
           <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
             <Binary className="w-4 h-4 mr-2" />
@@ -43,14 +47,14 @@ export function HomePage() {
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
             <Button asChild size="lg" className="group">
               <Link href="/chat" className="flex items-center gap-3 px-8 py-4 text-lg">
-                <MessageSquare size={20} />
+                <MessageSquareText size={20} />
                 <span>Start Chatting</span>
                 <SquareArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="group">
               <Link href="/image" className="flex items-center gap-3 px-8 py-4 text-lg">
-                <Sparkles size={20} />
+                <Image size={20} />
                 <span>Generate Images</span>
                 <SquareArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
@@ -60,7 +64,7 @@ export function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="px-6 py-16 sm:px-10 bg-muted/30">
+      <section className="px-6 py-10 sm:px-10 bg-muted/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-primary mb-4">

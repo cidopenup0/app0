@@ -18,11 +18,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-[100dvh] flex flex-col">
             <Navigation />
-            <main className="flex-1">
+            <main className="flex-1 relative">
               {children}
             </main>
           </div>
