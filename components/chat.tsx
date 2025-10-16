@@ -27,6 +27,7 @@ export function Chat() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState('llama-3-70b');
+  const [randomMessage, setRandomMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -81,6 +82,20 @@ export function Chat() {
       resetTextareaHeight();
     }
   }, [isLoading, messages.length]);
+  
+  useEffect(() => {
+    const messages = [
+      "What's on your mind today?",
+      "Ready to chat about anything!",
+      "Ask me anything you'd like to know.",
+      "Let's have a conversation!",
+      "What can I help you with?",
+      "Fire away with your questions!",
+      "I'm here and ready to assist.",
+      "What would you like to explore?"
+    ];
+    setRandomMessage(messages[Math.floor(Math.random() * messages.length)]);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -133,21 +148,14 @@ export function Chat() {
               <div className="flex flex-col min-h-[calc(100vh-73px)]">
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center flex-1 text-center py-12">
-                    <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-6">
-                      <Bot className="w-10 h-10 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-3">Start a conversation</h3>
-                    <p className="text-muted-foreground mb-6 max-w-md text-lg">
-                      Choose your AI model and ask anything. I'm here to help with questions, creative tasks, and more.
-                    </p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Bot className="w-4 h-4" />
-                      <span>Current model: {modelOptions.find(m => m.id === selectedModel)?.name}</span>
-                      {modelOptions.find(m => m.id === selectedModel)?.badge && (
-                        <Badge variant="secondary" className="text-xs px-2 py-1">
-                          {modelOptions.find(m => m.id === selectedModel)?.badge}
-                        </Badge>
-                      )}
+                    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-120px)] text-center">
+                      <p className="text-primary text-2xl sm:text-3xl lg:text-4xl font-medium px-4">
+                        {randomMessage}
+                      </p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-4">
+                        <span>Current model: <span className="text-primary">{modelOptions.find(m => m.id === selectedModel)?.name}</span></span>
+                        
+                      </div>
                     </div>
                   </div>
                 ) : (
