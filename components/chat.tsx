@@ -99,8 +99,7 @@ export function Chat() {
       console.error('Error:', error);
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Sorry, something went wrong. Please try again.'
-      },
+        { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' },
       ]);
     } finally {
       setIsLoading(false);
