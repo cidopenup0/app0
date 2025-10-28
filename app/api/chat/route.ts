@@ -19,7 +19,6 @@ const modelConfigs = {
     }
   },
   'gpt-5-nano': {
-    // Note: This is a placeholder - replace with actual model when available
     model: 'meta/meta-llama-3-70b-instruct', // Using llama as fallback
     input: {
       top_p: 0.95,
@@ -29,8 +28,7 @@ const modelConfigs = {
       presence_penalty: 1.1,
     }
   },
-  'deepseek-r1': {
-    // Note: This is a placeholder - replace with actual model when available  
+  'deepseek-r1': { 
     model: 'meta/meta-llama-3-70b-instruct', // Using llama as fallback
     input: {
       top_p: 0.85,
@@ -41,7 +39,6 @@ const modelConfigs = {
     }
   },
   'kimi-k2-instruct': {
-    // Note: This is a placeholder - replace with actual model when available
     model: 'meta/meta-llama-3-70b-instruct', // Using llama as fallback
     input: {
       top_p: 0.9,
