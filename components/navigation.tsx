@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MessageSquareText, Image, Binary, HomeIcon, Sparkles } from 'lucide-react';
 // import { FaDiscord } from 'react-icons/fa';
-import { ThemeToggle } from "./theme-toggle";
+import { AnimatedThemeToggle } from "./ui/animated-theme-toggle";
 
 export function Navigation() {
   return (
@@ -55,7 +55,7 @@ export function Navigation() {
 
             {/* Theme toggle */}
             <div className="ml-1">
-              <ThemeToggle />
+              <AnimatedThemeToggle />
             </div>
 
             {/* Optional: Discord Icon */}
