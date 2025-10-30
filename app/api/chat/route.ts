@@ -1,77 +1,66 @@
 import { NextResponse } from 'next/server';
-import Replicate from 'replicate';
 
-// Initialize Replicate
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN, // Use environment variable for authentication
-});
-
-// Model configurations
+// Model configurations for OpenRouter
 const modelConfigs = {
-  'llama-3-70b': {
-    model: 'meta/meta-llama-3-70b-instruct',
-    input: {
-      top_p: 0.9,
-      min_tokens: 0,
-      temperature: 0.6,
-      prompt_template: "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful assistant<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
-      presence_penalty: 1.15,
-    }
+  'gpt-oss-20b': {
+    model: 'openai/gpt-oss-20b:free',
   },
-  'gpt-5-nano': {
-    model: 'meta/meta-llama-3-70b-instruct', // Using llama as fallback
-    input: {
-      top_p: 0.95,
-      min_tokens: 0,
-      temperature: 0.7,
-      prompt_template: "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are GPT-5 Nano, a compact but powerful AI assistant. Be concise and helpful.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
-      presence_penalty: 1.1,
-    }
+  'gemma-3-27b': {
+    model: 'google/gemma-3-27b-it:free',
   },
-  'deepseek-r1': { 
-    model: 'meta/meta-llama-3-70b-instruct', // Using llama as fallback
-    input: {
-      top_p: 0.85,
-      min_tokens: 0,
-      temperature: 0.5,
-      prompt_template: "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are DeepSeek R1, an advanced AI model with strong reasoning capabilities. Think step by step and provide detailed analysis.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
-      presence_penalty: 1.2,
-    }
+  'qwen-2.5-72b': {
+    model: 'qwen/qwen-2.5-72b-instruct:free',
   },
-  'kimi-k2-instruct': {
-    model: 'meta/meta-llama-3-70b-instruct', // Using llama as fallback
-    input: {
-      top_p: 0.9,
-      min_tokens: 0,
-      temperature: 0.6,
-      prompt_template: "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are Kimi K2, an instruction-tuned AI assistant. Follow instructions carefully and provide accurate responses.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
-      presence_penalty: 1.15,
-    }
+  'nemotron-nano-12b-v2': {
+    model: 'nvidia/nemotron-nano-12b-v2-vl:free',
   }
 };
 
 export async function POST(req: Request) {
   try {
-    // Parse the incoming request
-    const { message, model = 'llama-3-70b' } = await req.json();
+    const { message, model = 'gpt-oss-20b' } = await req.json();
 
-    // Get model configuration
-    const config = modelConfigs[model as keyof typeof modelConfigs] || modelConfigs['llama-3-70b'];
-    
-    // Set up input for Replicate
-    const input = {
-      ...config.input,
-      prompt: message,
-    };
-
-    // Stream results from Replicate
-    let output = '';
-    for await (const event of replicate.stream(config.model as `${string}/${string}`, { input })) {
-      output += event; // Accumulate the streamed output
+    if (!message || !message.trim()) {
+      return NextResponse.json(
+        { error: 'Message is required' },
+        { status: 400 }
+      );
     }
 
-    // Return the final response
-    return NextResponse.json({ response: output });
+    // Get model configuration
+    const config = modelConfigs[model as keyof typeof modelConfigs] || modelConfigs['gpt-oss-20b'];
+    
+    // Call OpenRouter API
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('OpenRouter API error:', errorData);
+      throw new Error('Failed to get response from OpenRouter');
+    }
+
+    const data = await response.json();
+    let aiResponse = data.choices?.[0]?.message?.content || 'No response generated';
+
+    // Post-process the response to clean up formatting
+    aiResponse = cleanResponse(aiResponse);
+
+    return NextResponse.json({ response: aiResponse });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(
@@ -79,4 +68,20 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+// Function to clean up AI response formatting
+function cleanResponse(text: string): string {
+  // Remove lines that start with `: ` (colon followed by space) - these are often explanatory notes
+  // but keep them if they're part of a longer paragraph
+  const lines = text.split('\n');
+  const cleanedLines = lines.map(line => {
+    // If line starts with `: ` and is standalone, convert to bullet point or remove colon
+    if (line.trim().match(/^:\s+/)) {
+      return line.replace(/^:\s+/, '- ');
+    }
+    return line;
+  });
+  
+  return cleanedLines.join('\n');
 }
