@@ -236,7 +236,13 @@ body {
   margin: 1rem 0;
   border-radius: 8px;
   overflow: hidden;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+}
+
+.dark .code-block-wrapper {
   background: rgba(13, 17, 23, 0.54);
+  border: none;
 }
 
 .code-block-header {
@@ -244,22 +250,31 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 8px 16px;
+  background-color: hsl(var(--muted) / 0.5);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.dark .code-block-header {
   background-color: rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .code-language {
   font-size: 17px;
-  color: #888;
+  color: hsl(var(--foreground) / 0.6);
   font-weight: 500;
   text-transform: lowercase;
   letter-spacing: 0.5px;
 }
 
+.dark .code-language {
+  color: #888;
+}
+
 .code-copy-button {
   background-color: transparent;
   border: none;
-  color: #888;
+  color: hsl(var(--foreground) / 0.6);
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -270,7 +285,16 @@ body {
   transition: all 0.2s ease;
 }
 
+.dark .code-copy-button {
+  color: #888;
+}
+
 .code-copy-button:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.dark .code-copy-button:hover {
   background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
@@ -292,6 +316,10 @@ body {
 
 /* Markdown Content Styling */
 .assistant-message-wrapper {
+  color: hsl(var(--foreground));
+}
+
+.dark .assistant-message-wrapper {
   color: #e8e8e8;
 }
 
@@ -299,13 +327,22 @@ body {
   border-collapse: collapse;
   width: 100%;
   margin: 1rem 0;
-  background-color: rgba(42, 42, 42, 0.5);
+  background-color: hsl(var(--muted) / 0.3);
   border-radius: 8px;
   overflow: hidden;
+  border: 1px solid hsl(var(--border));
+}
+
+.dark .assistant-message-wrapper table {
+  background-color: rgba(42, 42, 42, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .assistant-message-wrapper thead {
+  background: hsl(var(--muted));
+}
+
+.dark .assistant-message-wrapper thead {
   background: linear-gradient(to bottom, #3a3a3a, #323232);
 }
 
@@ -313,13 +350,23 @@ body {
   padding: 12px 16px;
   text-align: left;
   font-weight: 600;
+  border-bottom: 2px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+  font-size: 0.95rem;
+}
+
+.dark .assistant-message-wrapper th {
   border-bottom: 2px solid #4a4a4a;
   color: #f0f0f0;
-  font-size: 0.95rem;
 }
 
 .assistant-message-wrapper td {
   padding: 10px 16px;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  color: hsl(var(--foreground) / 0.9);
+}
+
+.dark .assistant-message-wrapper td {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: #d8d8d8;
 }
@@ -329,6 +376,10 @@ body {
 }
 
 .assistant-message-wrapper tr:hover {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+.dark .assistant-message-wrapper tr:hover {
   background-color: rgba(60, 60, 60, 0.3);
 }
 
@@ -336,6 +387,11 @@ body {
 .assistant-message-wrapper ol {
   margin: 0.5rem 0;
   padding-left: 1.5rem;
+  color: hsl(var(--foreground) / 0.9);
+}
+
+.dark .assistant-message-wrapper ul,
+.dark .assistant-message-wrapper ol {
   color: #e0e0e0;
 }
 
@@ -347,6 +403,10 @@ body {
 .assistant-message-wrapper p {
   margin: 0.8rem 0.2rem 0;
   line-height: 1.7;
+  color: hsl(var(--foreground));
+}
+
+.dark .assistant-message-wrapper p {
   color: #e8e8e8;
 }
 
@@ -357,71 +417,121 @@ body {
   margin-top: 1.5rem;
   margin-bottom: 0.8rem;
   font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.dark .assistant-message-wrapper h1,
+.dark .assistant-message-wrapper h2,
+.dark .assistant-message-wrapper h3,
+.dark .assistant-message-wrapper h4 {
   color: #f5f5f5;
 }
 
 .assistant-message-wrapper h1 {
   font-size: 1.8rem;
+  border-bottom: 2px solid hsl(var(--border));
+  padding-bottom: 0.5rem;
+}
+
+.dark .assistant-message-wrapper h1 {
   color: #ffffff;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 0.5rem;
 }
 
 .assistant-message-wrapper h2 {
   font-size: 1.5rem;
+}
+
+.dark .assistant-message-wrapper h2 {
   color: #f8f8f8;
 }
 
 .assistant-message-wrapper h3 {
   font-size: 1.2rem;
+}
+
+.dark .assistant-message-wrapper h3 {
   color: #f0f0f0;
 }
 
 .assistant-message-wrapper code:not(pre code) {
-  background: linear-gradient(to bottom, rgba(100, 100, 255, 0.15), rgba(80, 80, 200, 0.1));
-  color: #a8d4ff;
+  background: hsl(var(--muted));
+  color: hsl(var(--primary));
   padding: 3px 8px;
   border-radius: 4px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9em;
+  border: 1px solid hsl(var(--border));
+}
+
+.dark .assistant-message-wrapper code:not(pre code) {
+  background: linear-gradient(to bottom, rgba(100, 100, 255, 0.15), rgba(80, 80, 200, 0.1));
+  color: #a8d4ff;
   border: 1px solid rgba(100, 100, 255, 0.2);
 }
 
 .assistant-message-wrapper blockquote {
-  border-left: 4px solid #6b8aff;
+  border-left: 4px solid hsl(var(--primary));
   padding-left: 1rem;
   margin: 1rem 0;
-  color: #c8c8c8;
+  color: hsl(var(--foreground) / 0.8);
   font-style: italic;
-  background: rgba(107, 138, 255, 0.05);
+  background: hsl(var(--muted) / 0.5);
   padding: 0.8rem 1rem;
   border-radius: 0 4px 4px 0;
 }
 
+.dark .assistant-message-wrapper blockquote {
+  border-left: 4px solid #6b8aff;
+  color: #c8c8c8;
+  background: rgba(107, 138, 255, 0.05);
+}
+
 .assistant-message-wrapper hr {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid hsl(var(--border));
   margin: 1.5rem 0;
 }
 
+.dark .assistant-message-wrapper hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
 .assistant-message-wrapper a {
-  color: #5e9bff;
+  color: hsl(var(--primary));
   text-decoration: none;
-  border-bottom: 1px solid rgba(94, 155, 255, 0.3);
+  border-bottom: 1px solid hsl(var(--primary) / 0.3);
   transition: all 0.2s ease;
 }
 
+.dark .assistant-message-wrapper a {
+  color: #5e9bff;
+  border-bottom: 1px solid rgba(94, 155, 255, 0.3);
+}
+
 .assistant-message-wrapper a:hover {
+  opacity: 0.8;
+}
+
+.dark .assistant-message-wrapper a:hover {
   color: #7db3ff;
   border-bottom-color: #7db3ff;
 }
 
 .assistant-message-wrapper strong {
-  color: #ffffff;
+  color: hsl(var(--foreground));
   font-weight: 600;
 }
 
+.dark .assistant-message-wrapper strong {
+  color: #ffffff;
+}
+
 .assistant-message-wrapper em {
+  color: hsl(var(--foreground) / 0.9);
+}
+
+.dark .assistant-message-wrapper em {
   color: #d0d0d0;
 }
 
