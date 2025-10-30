@@ -62,7 +62,7 @@ export const PromptInputBox = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "rounded-2xl border border-[#444444] bg-transparent backdrop-blur-md p-3 shadow-[0_8px_30px_rgba(0,0,0,0.24)] transition-all duration-300 hover:border-[#555555]",
+        "rounded-2xl border border-[#444444] bg-[#1e1e1e] backdrop-blur-md p-3 shadow-[0_8px_30px_rgba(0,0,0,0.24)] transition-all duration-300 hover:border-[#555555]",
         className
       )}
     >
