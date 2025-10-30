@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bot, User, Copy, Check } from 'lucide-react';
+import { Bot, Copy, Check } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +26,6 @@ export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState('gpt-oss-20b');
-  const [randomMessage, setRandomMessage] = useState('');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -65,20 +64,6 @@ export function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  useEffect(() => {
-    const greetings = [
-      "What's on your mind today?",
-      'Ready to chat about anything!',
-      "Ask me anything you'd like to know.",
-      "Let's have a conversation!",
-      'What can I help you with?',
-      'Fire away with your questions!',
-      "I'm here and ready to assist.",
-      'What would you like to explore?',
-    ];
-    setRandomMessage(greetings[Math.floor(Math.random() * greetings.length)]);
-  }, []);
 
   const handleCopy = async (text: string, index: number) => {
     try {
@@ -202,15 +187,15 @@ export function Chat() {
   }
 
   return (
-    <div className="relative flex flex-col h-[calc(100vh-73px)] pb-[100px] bg-[#212121]">
+    <div className="relative flex flex-col h-[calc(100vh-73px)] pb-[100px] bg-background overflow-x-auto">
       <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full bg-[#212121]">
+        <ScrollArea className="h-full bg-background">
           <div className="flex justify-center min-h-full">
             <div className="w-full max-w-5xl mx-auto px-4 sm:px-6">
               {messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
                   <p className="text-primary text-2xl sm:text-3xl lg:text-4xl font-medium px-4">
-                    {randomMessage}
+                    What can I help you with?
                   </p>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mt-4">
                     <span>
@@ -235,7 +220,9 @@ export function Chat() {
                       >                    
                         <div className="flex flex-col gap-1 w-full">
                           <div className={`rounded-lg ${
-                            message.role === 'user' ? 'p-4 bg-[#303030]' : 'px-4 pt-4 pb-0 text-[#8b948d] w-full assistant-message-wrapper'
+                            message.role === 'user' 
+                              ? 'p-4 bg-muted dark:bg-[#303030]' 
+                              : 'px-4 pt-4 pb-0 text-foreground dark:text-[#8b948d] w-full assistant-message-wrapper'
                           }`}>
                             <div className={`leading-relaxed break-words ${
                               message.role === 'assistant' ? 'text-base' : 'text-sm'
@@ -321,10 +308,10 @@ export function Chat() {
           placeholder="Ask anything..."
           leftSlot={
             <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger className="w-8 h-8 border-none bg-transparent p-0.5 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all shadow-none focus:ring-0">
+              <SelectTrigger className="w-8 h-8 border-none bg-transparent text-white p-0.5 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all shadow-none focus:ring-0">
                 <Bot className="w-4 h-4 text-white" />
               </SelectTrigger>
-              <SelectContent align="start" className="w-80 bg-[#303030] ">
+              <SelectContent align="start" className="w-80">
                 {modelOptions.map((model) => (
                   <SelectItem key={model.id} value={model.id}>
                     <div className="flex flex-col gap-1 py-1">
