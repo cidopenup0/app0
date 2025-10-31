@@ -187,33 +187,7 @@ export function Chat() {
         ...prev,
         {
           role: 'assistant',
-          content: `Here’s a simple **C program** that prints “Hello, World!” — the traditional first example:
-
-\`\`\`c
-#include <stdio.h>
-
-int main() {
-    printf("Hello, World!\\n");
-    return 0;
-}
-\`\`\`
-
-### How to run it:
-
-Save the file as \`hello.c\`.
-
-Open a terminal and compile it using:
-
-\`\`\`bash
-gcc hello.c -o hello
-\`\`\`
-
-Run the compiled program:
-
-\`\`\`bash
-./hello
-\`\`\`
-`,
+          content: 'Sorry, there was an error processing your request. Please try again.',
         },
       ]);
     } finally {
