@@ -8,7 +8,7 @@ const cn = (...classes: (string | undefined | null | false)[]) =>
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,
   React.TextareaHTMLAttributes<HTMLTextAreaElement>
->(({ className, value, ...props }, ref) => {
+>(({ className, value, onScroll, ...props }, ref) => {
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   React.useEffect(() => {
@@ -16,7 +16,7 @@ const Textarea = React.forwardRef<
     if (!el) return;
 
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 150)}px`;
+    el.style.height = `${Math.min(el.scrollHeight, 300)}px`;
   }, [value]);
 
   return (
@@ -28,6 +28,7 @@ const Textarea = React.forwardRef<
       }}
       value={value}
       rows={1}
+      onScroll={onScroll}
       className={cn(
         "flex w-full border-none bg-transparent px-3 py-2.5 text-base text-gray-100 placeholder:text-gray-400 focus-visible:outline-none resize-none overflow-y-auto",
         className
@@ -48,6 +49,20 @@ export const PromptInputBox = React.forwardRef<
   }
 >(({ onSend = () => {}, placeholder = "Type your message here...", className, leftSlot }, ref) => {
   const [input, setInput] = React.useState("");
+  const [showBottomFade, setShowBottomFade] = React.useState(false);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    const target = e.currentTarget;
+    setShowBottomFade(target.scrollTop < target.scrollHeight - target.clientHeight - 5);
+  };
+
+  React.useEffect(() => {
+    const el = textareaRef.current;
+    if (el) {
+      setShowBottomFade(el.scrollHeight > el.clientHeight);
+    }
+  }, [input]);
 
   const handleSubmit = () => {
     if (input.trim()) {
@@ -62,22 +77,30 @@ export const PromptInputBox = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "rounded-2xl border border-[#444444] bg-[#1e1e1e] backdrop-blur-md p-3 shadow-[0_8px_30px_rgba(0,0,0,0.24)] transition-all duration-300 hover:border-[#555555]",
+        "rounded-2xl border border-[#444444] bg-[#1e1e1e] backdrop-blur-md pt-1 p-3 shadow-[0_8px_30px_rgba(0,0,0,0.24)] transition-all duration-300 hover:border-[#555555]",
         className
       )}
     >
-      <Textarea
-        placeholder={placeholder}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSubmit();
-          }
-        }}
-        className="flex-1 text-sm px-2"
-      />
+      <div className="relative">
+        <Textarea
+          ref={textareaRef}
+          placeholder={placeholder}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onScroll={handleScroll}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
+          className="flex-1 text-sm px-2"
+        />
+
+        {showBottomFade && (
+          <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-[#1e1e1e] to-transparent pointer-events-none z-10" />
+        )}
+      </div>
 
       <div className="flex items-center justify-between mt-2">
         {leftSlot && <div className="flex items-center shrink-0">{leftSlot}</div>}
