@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bot, Copy, Check, ChevronDown } from 'lucide-react';
+import { Bot, Copy, Check, ChevronDown, ArrowDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { PromptInputBox } from '@/components/ui/ai-prompt-box';
@@ -29,7 +29,9 @@ export function Chat() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [expandedMessages, setExpandedMessages] = useState<Set<number>>(new Set());
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const modelOptions: ModelOption[] = [
     {
@@ -63,6 +65,22 @@ export function Chat() {
   };
 
   useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+        setShowScrollButton(distanceFromBottom > 100);
+      }
+    };
+
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
@@ -71,16 +89,6 @@ export function Chat() {
       await navigator.clipboard.writeText(text);
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
-  const handleCopyCode = async (code: string, codeId: string) => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopiedCode(codeId);
-      setTimeout(() => setCopiedCode(null), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -198,7 +206,7 @@ export function Chat() {
   return (
     <div className="relative flex flex-col h-[calc(100vh-73px)] pb-[100px] bg-background overflow-x-auto">
       <div className="flex-1 overflow-x-auto">
-        <div className="h-full bg-background overflow-y-auto overflow-x-hidden">
+        <div ref={scrollContainerRef} className="h-full bg-background overflow-y-auto overflow-x-hidden">
           <div className="flex justify-center min-h-full">
             <div className="w-full max-w-5xl mx-auto px-4 sm:px-6">
               {messages.length === 0 ? (
@@ -227,7 +235,7 @@ export function Chat() {
                           message.role === 'user' ? 'flex-row-reverse max-w-[55%]' : 'w-full'
                         }`}
                       >
-                        <div className="flex flex-col gap-1 w-full">
+                        <div className={`flex flex-col gap-1 w-full ${message.role === 'user' ? 'group' : ''}`}>
                           <div
                             className={`rounded-lg ${
                               message.role === 'user'
@@ -284,7 +292,7 @@ export function Chat() {
                           <button
                             onClick={() => handleCopy(message.content, i)}
                             className={`text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 py-1 rounded hover:bg-muted/50 ${
-                              message.role === 'user' ? 'px-2 pt-2 self-end' : 'px-4 self-start'
+                              message.role === 'user' ? 'px-2 pt-2 self-end opacity-0 group-hover:opacity-100' : 'px-4 self-start'
                             }`}
                             title="Copy message"
                           >
@@ -331,6 +339,19 @@ export function Chat() {
           </div>
         </div>
       </div>
+
+      {/* Scroll to bottom button */}
+      {showScrollButton && (
+        <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-10">
+          <button
+            onClick={scrollToBottom}
+            className="flex items-center justify-center w-9 h-9 bg-[#2a2a2a] hover:bg-[#3a3a3a] border border-[#444444] rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+            aria-label="Scroll to bottom"
+          >
+            <ArrowDown className="w-5 h-5 text-white" />
+          </button>
+        </div>
+      )}
 
       {/* Fixed floating input box */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4">
