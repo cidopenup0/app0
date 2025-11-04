@@ -319,14 +319,24 @@
     color: #e8e8e8;
   }
 
+  /* Table wrapper for horizontal scroll */
   .assistant-message-wrapper table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
     border-collapse: collapse;
-    width: 100%;
     margin: 1rem 0;
     background-color: hsl(var(--muted) / 0.3);
     border-radius: 8px;
-    overflow: hidden;
     border: 1px solid hsl(var(--border));
+  }
+
+  .assistant-message-wrapper table thead,
+  .assistant-message-wrapper table tbody,
+  .assistant-message-wrapper table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
   }
 
   .dark .assistant-message-wrapper table {
