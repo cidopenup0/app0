@@ -10,11 +10,10 @@ export function HomePage() {
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <section className="flex-1 flex flex-col justify-center items-center px-6 py-16 sm:px-10 relative">
+        {/* Background decoration */}
         <div className= "absolute inset-0">
           <DotScreenShader />
         </div>
-        {/* Background decoration */}
-        {/* <div className="absolute inset-0 bg-gradient-to-b from-muted/20 via-background to-background" /> */}
         
         <div className="max-w-3xl w-full text-center relative z-10">
           {/* Hero Badge */}
@@ -45,37 +44,39 @@ export function HomePage() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-700">
-            <Button asChild size="lg" className="group relative overflow-hidden">
-              <Link href="/chat" className="flex items-center gap-3 px-8 py-4 text-lg">
-                <MessageSquareText size={20} className="transition-transform group-hover:scale-110" />
-                <span>Start Chatting</span>
-                <SquareArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            <Button asChild variant="outline" size="lg" className="group relative overflow-hidden transition-colors duration-200">
+              <Link href="/chat" className="flex items-center gap-3 px-8 py-4 text-lg text-foreground transition-colors duration-200">
+                <MessageSquareText size={20} className="transition-all duration-1000 group-hover:scale-110" />
+                <span className="transition-colors duration-1000">Start Chatting</span>
+                <SquareArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="group relative overflow-hidden">
-              <Link href="/image" className="flex items-center gap-3 px-8 py-4 text-lg">
-                <Image size={20} className="transition-transform group-hover:scale-110" />
-                <span>Generate Images</span>
-                <SquareArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            <Button asChild variant="outline" size="lg" className="group relative overflow-hidden transition-colors duration-200">
+              <Link href="/image" className="flex items-center gap-3 px-8 py-4 text-lg text-foreground transition-colors duration-200">
+                <Image size={20} className="transition-all duration-1000 group-hover:scale-110" />
+                <span className="transition-colors duration-1000">Generate Images</span>
+                <SquareArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </Link>
             </Button>
           </div>
 
-          {/* Floating Icons Animation */}
-          <div className="absolute top-20 left-10 animate-bounce delay-1000">
-            <Bot className="w-8 h-8 text-primary/40" />
-          </div>
-          <div className="absolute top-32 right-10 animate-bounce delay-1500">
-            <Wand2 className="w-6 h-6 text-purple-400/40" />
-          </div>
-          <div className="absolute bottom-20 left-20 animate-bounce delay-2000">
-            <Sparkles className="w-7 h-7 text-blue-400/40" />
-          </div>
-          <div className="absolute bottom-32 right-20 animate-bounce delay-2500">
-            <Rocket className="w-6 h-6 text-green-400/40" />
-          </div>
+          {/* Floating Icons Animation - Hidden on mobile, visible on larger screens */}
+          <div className="hidden md:block">
+            <div className="absolute top-20 left-10 animate-bounce delay-1000">
+              <Bot className="w-8 h-8 text-primary/40" />
+            </div>
+            <div className="absolute top-32 right-10 animate-bounce delay-1500">
+              <Wand2 className="w-6 h-6 text-purple-400/40" />
+            </div>
+            <div className="absolute bottom-20 left-20 animate-bounce delay-2000">
+              <Sparkles className="w-7 h-7 text-blue-400/40" />
+            </div>
+            <div className="absolute bottom-32 right-20 animate-bounce delay-2500">
+              <Rocket className="w-6 h-6 text-green-400/40" />
+            </div>
+          </div>        
         </div>
       </section>
 
