@@ -25,38 +25,37 @@ interface ModelOption {
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('gpt-oss-20b');
+  const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [expandedMessages, setExpandedMessages] = useState<Set<number>>(new Set());
   const [showScrollButton, setShowScrollButton] = useState(false);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const modelOptions: ModelOption[] = [
+  const scrollContainerRef = useRef<HTMLDivElement>(null);  const modelOptions: ModelOption[] = [
     {
-      id: 'gpt-oss-20b',
-      name: 'GPT-OSS 20B',
-      description: "OpenAI's tiny powerful open-source model",
+      id: 'openai/gpt-oss-120b',
+      name: 'GPT-OSS 120B',
+      description: "OpenAI's powerful open-source model",
+      badge: 'Default',
+    },
+    {
+      id: 'llama-3.3-70b-versatile',
+      name: 'Llama 3.3 70B Versatile',
+      description: 'Meta\'s versatile large language model',
       badge: 'Popular',
     },
     {
-      id: 'gemma-3-27b',
-      name: 'Gemma 3 27B',
-      description: "Google's multilingual model",
+      id: 'moonshotai/kimi-k2-instruct',
+      name: 'Kimi K2 Instruct',
+      description: 'MoonshotAI\'s instruction-following model',
       badge: 'New',
     },
     {
-      id: 'qwen-2.5-72b',
-      name: 'Qwen 2.5 72B Instruct',
-      description: 'Instruction-tuned model',
-      badge: 'Pro',
-    },
-    {
-      id: 'nemotron-nano-12b-v2',
-      name: 'Nemotron Nano 12B V2',
-      description: "Nvidia's small multimodal model",
-      badge: 'Multimodal',
+      id: 'groq/compound-mini',
+      name: 'Groq Compound Mini',
+      description: 'Groq\'s efficient compound model',
+      badge: 'Fast',
     },
   ];
 
@@ -178,10 +177,14 @@ export function Chat() {
     setIsLoading(true);
 
     try {
+      // Send the entire conversation history for context
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, model: selectedModel }),
+        body: JSON.stringify({ 
+          messages: [...messages, newMessage],
+          model: selectedModel 
+        }),
       });
 
       if (!response.ok) throw new Error('Failed to get response');
@@ -292,7 +295,7 @@ export function Chat() {
                           <button
                             onClick={() => handleCopy(message.content, i)}
                             className={`text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 py-1 rounded hover:bg-muted/50 ${
-                              message.role === 'user' ? 'px-2 pt-2 self-end opacity-0 group-hover:opacity-100' : 'px-4 self-start'
+                              message.role === 'user' ? 'px-2 pt-2 self-end opacity-0 group-hover:opacity-100' : 'ml-2 px-4 self-start'
                             }`}
                             title="Copy message"
                           >
