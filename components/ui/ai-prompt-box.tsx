@@ -1,5 +1,5 @@
 ﻿import React from "react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Mic, MicOff } from "lucide-react";
 
 const cn = (...classes: (string | undefined | null | false)[]) =>
   classes.filter(Boolean).join(" ");
@@ -50,7 +50,11 @@ export const PromptInputBox = React.forwardRef<
 >(({ onSend = () => {}, placeholder = "Type your message here...", className, leftSlot }, ref) => {
   const [input, setInput] = React.useState("");
   const [showBottomFade, setShowBottomFade] = React.useState(false);
+  const [isRecording, setIsRecording] = React.useState(false);
+  const [isTranscribing, setIsTranscribing] = React.useState(false);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
+  const audioChunksRef = React.useRef<Blob[]>([]);
 
   const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget;
@@ -63,6 +67,73 @@ export const PromptInputBox = React.forwardRef<
       setShowBottomFade(el.scrollHeight > el.clientHeight);
     }
   }, [input]);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        setIsTranscribing(true);
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        
+        try {
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'recording.wav');
+
+          const response = await fetch('/api/speech-to-text', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API error: ${response.status} - ${errorData.error}`);
+          }
+
+          const data = await response.json();
+          
+          if (data.text) {
+            setInput(prev => prev + (prev ? ' ' : '') + data.text);
+          }
+        } catch (error) {
+          console.error('Transcription error:', error);
+          // You might want to show a user-friendly error message here
+        } finally {
+          setIsTranscribing(false);
+        }
+
+        // Stop all tracks to release the microphone
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
 
   const handleSubmit = () => {
     if (input.trim()) {
@@ -105,18 +176,44 @@ export const PromptInputBox = React.forwardRef<
       <div className="flex items-center justify-between mt-2">
         {leftSlot && <div className="flex items-center shrink-0">{leftSlot}</div>}
 
-        <button
-          onClick={handleSubmit}
-          disabled={!hasContent}
-          className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200",
-            hasContent
-              ? "bg-white hover:bg-white/90 text-[#1F2023]"
-              : "bg-white/10 text-gray-500 cursor-not-allowed"
-          )}
-        >
-          <ArrowUp className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Microphone button */}
+          <button
+            onClick={toggleRecording}
+            disabled={isTranscribing}
+            className={cn(
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200",
+              isRecording
+                ? "bg-red-500 hover:bg-red-600 text-white animate-pulse"
+                : isTranscribing
+                ? "bg-yellow-500 text-white cursor-not-allowed"
+                : "bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white"
+            )}
+            title={isRecording ? "Stop recording" : isTranscribing ? "Transcribing..." : "Start voice recording"}
+          >
+            {isTranscribing ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : isRecording ? (
+              <MicOff className="h-4 w-4" />
+            ) : (
+              <Mic className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Submit button */}
+          <button
+            onClick={handleSubmit}
+            disabled={!hasContent}
+            className={cn(
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200",
+              hasContent
+                ? "bg-white hover:bg-white/90 text-[#1F2023]"
+                : "bg-white/10 text-gray-500 cursor-not-allowed"
+            )}
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
