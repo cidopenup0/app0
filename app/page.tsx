@@ -9,7 +9,7 @@ export function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col justify-center items-center px-6 py-16 sm:px-10 relative">
+      <section className="flex-1 flex flex-col justify-center items-center px-6 py-16 sm:px-10 relative min-h-screen">
         {/* Background decoration */}
         <div className= "absolute inset-0">
           <DotScreenShader />
