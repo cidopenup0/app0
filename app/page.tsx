@@ -60,28 +60,12 @@ export function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </Link>
             </Button>
-          </div>
-
-          {/* Floating Icons Animation - Hidden on mobile, visible on larger screens */}
-          <div className="hidden md:block">
-            <div className="absolute top-20 left-10 animate-bounce delay-1000">
-              <Bot className="w-8 h-8 text-primary/40" />
-            </div>
-            <div className="absolute top-32 right-10 animate-bounce delay-1500">
-              <Wand2 className="w-6 h-6 text-purple-400/40" />
-            </div>
-            <div className="absolute bottom-20 left-20 animate-bounce delay-2000">
-              <Sparkles className="w-7 h-7 text-blue-400/40" />
-            </div>
-            <div className="absolute bottom-32 right-20 animate-bounce delay-2500">
-              <Rocket className="w-6 h-6 text-green-400/40" />
-            </div>
-          </div>        
+          </div>      
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="px-6 py-10 sm:px-10 bg-muted/30">
+      <section className="px-6 py-10 sm:px-10">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-primary mb-4 animate-in fade-in slide-in-from-left duration-1000">
@@ -98,7 +82,7 @@ export function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <CardHeader className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
-                  <MessageSquare className="w-8 h-8 text-primary group-hover:animate-pulse" />
+                  <MessageSquare className="w-8 h-8 text-primary" />
                 </div>
                 <CardTitle className="text-2xl mb-2">Smart AI Conversations</CardTitle>
                 <CardDescription className="text-base">
@@ -108,19 +92,19 @@ export function HomePage() {
               <CardContent className="relative z-10">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-green-500 rounded-full"/>
                     Multiple AI models with instant switching
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200" />
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"/>
                     Rich markdown & syntax highlighting
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-400" />
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"/>
                     Voice input for hands-free interaction
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse delay-600" />
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"/>
                     Persistent conversation history
                   </div>
                 </div>
@@ -132,7 +116,7 @@ export function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <CardHeader className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
-                  <Sparkles className="w-8 h-8 text-purple-500 group-hover:animate-spin" />
+                  <Sparkles className="w-8 h-8 text-purple-500" />
                 </div>
                 <CardTitle className="text-2xl mb-2">AI Image Generation</CardTitle>
                 <CardDescription className="text-base">
@@ -142,19 +126,19 @@ export function HomePage() {
               <CardContent className="relative z-10">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-pink-500 rounded-full"/>
                     Multiple generation models available
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse delay-200" />
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"/>
                     High-quality, professional outputs
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse delay-400" />
+                    <div className="w-2 h-2 bg-cyan-500 rounded-full"/>
                     Instant preview and download
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-600" />
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full"/>
                     Creative prompt flexibility
                   </div>
                 </div>
@@ -164,85 +148,8 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Technical Features Section */}
-      <section className="px-6 py-16 sm:px-10 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-purple-500/5" />
-        
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-primary mb-4 animate-in fade-in slide-in-from-bottom duration-1000">
-              Built for Performance
-            </h2>
-            <p className="text-muted-foreground text-xl animate-in fade-in slide-in-from-bottom duration-1000 delay-200">
-              Modern architecture powered by cutting-edge APIs
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="group hover:shadow-2xl transition-all duration-700 hover:-translate-y-3 border-primary/30 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-500">
-                  <Zap className="w-8 h-8 text-primary group-hover:animate-bounce" />
-                </div>
-                <CardTitle className="text-2xl mb-2">Lightning Fast</CardTitle>
-                <CardDescription className="text-base">
-                  Groq API delivers ultra-low latency for real-time AI interactions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group-hover:bg-primary/5 transition-colors">
-                    <span className="text-sm">Response Time</span>
-                    <Badge variant="secondary" className="group-hover:animate-pulse">
-                      ~200ms
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group-hover:bg-primary/5 transition-colors">
-                    <span className="text-sm">Models Available</span>
-                    <Badge variant="secondary" className="group-hover:animate-pulse">
-                      4 Models
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover:shadow-2xl transition-all duration-700 hover:-translate-y-3 border-purple-500/30 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform duration-500">
-                  <Binary className="w-8 h-8 text-purple-500 group-hover:animate-spin" />
-                </div>
-                <CardTitle className="text-2xl mb-2">Modern Stack</CardTitle>
-                <CardDescription className="text-base">
-                  Built with Next.js 15, TypeScript, and cutting-edge web technologies
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-2 bg-muted/50 rounded text-center text-xs font-medium group-hover:bg-purple-500/10 transition-colors">
-                    Next.js 15
-                  </div>
-                  <div className="p-2 bg-muted/50 rounded text-center text-xs font-medium group-hover:bg-purple-500/10 transition-colors">
-                    TypeScript
-                  </div>
-                  <div className="p-2 bg-muted/50 rounded text-center text-xs font-medium group-hover:bg-purple-500/10 transition-colors">
-                    Tailwind CSS
-                  </div>
-                  <div className="p-2 bg-muted/50 rounded text-center text-xs font-medium group-hover:bg-purple-500/10 transition-colors">
-                    Radix UI
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* Info Section */}
-      <section className="px-6 py-12 sm:px-10 bg-muted/30">
+      <section className="px-6 py-12 sm:px-10">
         <div className="max-w-3xl mx-auto text-center">
           <div className="bg-background/80 backdrop-blur rounded-lg p-6 border border-border/50 shadow-sm">
             <h3 className="text-lg font-semibold text-primary mb-3">
@@ -261,7 +168,7 @@ export function HomePage() {
       <footer className="text-center py-6 border-t border-border text-sm text-muted-foreground bg-muted/20">
         Made with <span className="text-red-500"><Heart fill="red" className='inline w-4 h-4' /></span> by{' '}
         <Link
-          href="https://discord.com/users/1123900774670413856"
+          href="https://github.com/cidopenup0"
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline font-medium transition-colors"
