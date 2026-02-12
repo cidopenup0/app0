@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { MessageSquareText, Image, Binary, HomeIcon, Sparkles } from 'lucide-react';
+import { MessageSquareText, Binary, HomeIcon, Zap } from 'lucide-react';
 // import { FaDiscord } from 'react-icons/fa';
-import { AnimatedThemeToggle } from "./ui/animated-theme-toggle";
+import ThemeSwitchCircular from "./ui/theme-switch-circular";
 
 export function Navigation() {
   return (
@@ -42,23 +42,18 @@ export function Navigation() {
             </Link>
             
             <Link 
-              href="/image" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105 group relative"
+              href="/chat/models" 
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105 group"
             >
-              <Image className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="hidden sm:inline font-medium">Generate</span>
-              <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-primary/60 animate-pulse" />
+              <Zap className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+              <span className="hidden sm:inline font-medium">Models</span>
             </Link>
-
-            {/* Divider */}
-            <div className="hidden sm:block w-px h-6 bg-border mx-1" />
-
+            
             {/* Theme toggle */}
             <div className="ml-1">
-              <AnimatedThemeToggle />
+              <ThemeSwitchCircular />
             </div>
 
-            {/* Optional: Discord Icon */}
             {/* <a 
               href="https://discord.com/users/1123900774670413856"
               target="_blank"

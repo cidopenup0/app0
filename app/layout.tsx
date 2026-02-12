@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "app0 - AI Chat & Image Generation",
-  description: "Chat with AI and generate images using Replicate",
+  title: "app0 - AI Chat",
+  description: "Chat with AI and speech-to-text support",
 }
 
 export default function RootLayout({

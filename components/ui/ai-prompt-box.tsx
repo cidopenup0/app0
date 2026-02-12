@@ -52,6 +52,7 @@ export const PromptInputBox = React.forwardRef<
   const [showBottomFade, setShowBottomFade] = React.useState(false);
   const [isRecording, setIsRecording] = React.useState(false);
   const [isTranscribing, setIsTranscribing] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const audioChunksRef = React.useRef<Blob[]>([]);
@@ -103,8 +104,10 @@ export const PromptInputBox = React.forwardRef<
             setInput(prev => prev + (prev ? ' ' : '') + data.text);
           }
         } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to transcribe audio';
           console.error('Transcription error:', error);
-          // You might want to show a user-friendly error message here
+          setError(errorMessage);
+          setTimeout(() => setError(null), 5000);
         } finally {
           setIsTranscribing(false);
         }
@@ -172,6 +175,12 @@ export const PromptInputBox = React.forwardRef<
           <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-[#1e1e1e] to-transparent pointer-events-none z-10" />
         )}
       </div>
+
+      {error && (
+        <div className="mt-2 px-3 py-2 bg-red-500/20 border border-red-500/50 rounded-lg text-sm text-red-400 animate-in slide-in-from-top-2">
+          {error}
+        </div>
+      )}
 
       <div className="flex items-center justify-between mt-2">
         {leftSlot && <div className="flex items-center shrink-0">{leftSlot}</div>}

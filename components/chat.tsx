@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, Copy, Check, ChevronDown, ArrowDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { PromptInputBox } from '@/components/ui/ai-prompt-box';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -20,44 +19,74 @@ interface ModelOption {
   name: string;
   description: string;
   badge?: string;
+  provider?: string;
 }
 
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
+  const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b:free');
+  const [selectedProvider, setSelectedProvider] = useState<'Google' | 'Meta' | 'OpenAI'>('OpenAI');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [expandedMessages, setExpandedMessages] = useState<Set<number>>(new Set());
   const [showScrollButton, setShowScrollButton] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);  const modelOptions: ModelOption[] = [
+  const scrollContainerRef = useRef<HTMLDivElement>(null);  
+  
+  const allModels: ModelOption[] = [
     {
-      id: 'openai/gpt-oss-120b',
-      name: 'GPT-OSS 120B',
-      description: "OpenAI's powerful open-source model",
-      badge: 'Default',
+      id: 'google/gemma-3-4b-it:free',
+      name: 'Gemma 3 4B',
+      description: 'Fast and efficient for everyday questions',
+      provider: 'Google',
     },
     {
-      id: 'llama-3.3-70b-versatile',
-      name: 'Llama 3.3 70B Versatile',
-      description: 'Meta\'s versatile large language model',
-      badge: 'Popular',
+      id: 'google/gemma-3-12b-it:free',
+      name: 'Gemma 3 12B',
+      description: 'Balanced performance and quality',
+      provider: 'Google',
     },
     {
-      id: 'moonshotai/kimi-k2-instruct',
-      name: 'Kimi K2 Instruct',
-      description: 'MoonshotAI\'s instruction-following model',
-      badge: 'New',
+      id: 'google/gemma-3-27b-it:free',
+      name: 'Gemma 3 27B',
+      description: 'Powerful model for complex questions',
+      provider: 'Google',
     },
     {
-      id: 'groq/compound-mini',
-      name: 'Groq Compound Mini',
-      description: 'Groq\'s efficient compound model',
-      badge: 'Fast',
+      id: 'meta-llama/llama-3.2-3b-instruct:free',
+      name: 'Llama 3.2 3B',
+      description: 'Lightweight and responsive',
+      provider: 'Meta',
+    },
+    {
+      id: 'meta-llama/llama-3.3-70b-instruct:free',
+      name: 'Llama 3.3 70B',
+      description: 'Advanced reasoning and details',
+      provider: 'Meta',
+    },
+    {
+      id: 'openai/gpt-oss-20b:free',
+      name: 'GPT OSS 20B',
+      description: 'Solid general performance',
+      provider: 'OpenAI',
+    },
+    {
+      id: 'openai/gpt-oss-120b:free',
+      name: 'GPT OSS 120B',
+      description: 'Most powerful open-source model',
+      provider: 'OpenAI',
     },
   ];
+  
+  const modelOptions = allModels;
+  
+  const modelsByProvider = {
+    Google: allModels.filter(m => m.provider === 'Google').sort((a, b) => a.name.localeCompare(b.name)),
+    Meta: allModels.filter(m => m.provider === 'Meta').sort((a, b) => a.name.localeCompare(b.name)),
+    OpenAI: allModels.filter(m => m.provider === 'OpenAI').sort((a, b) => a.name.localeCompare(b.name)),
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -209,11 +238,14 @@ export function Chat() {
   return (
     <div className="relative flex flex-col h-[calc(100vh-73px)] pb-[100px] bg-background overflow-x-auto">
       <div className="flex-1 overflow-x-auto">
-        <div ref={scrollContainerRef} className="h-full bg-background overflow-y-auto overflow-x-hidden">
+        <div
+          ref={scrollContainerRef}
+          className={`h-full bg-background overflow-x-hidden ${messages.length > 0 ? 'overflow-y-auto' : 'overflow-y-hidden'}`}
+        >
           <div className="flex justify-center min-h-full">
             <div className="w-full max-w-5xl mx-auto px-4 sm:px-6">
               {messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] text-center">
+                <div className="flex flex-col items-center justify-center h-full text-center">
                   <p className="text-primary text-2xl sm:text-3xl lg:text-4xl font-medium px-4">
                     What can I help you with?
                   </p>
@@ -363,27 +395,39 @@ export function Chat() {
           placeholder="Ask anything..."
           leftSlot={
             <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger className="w-8 h-8 border-none bg-transparent text-white p-0.5 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all shadow-none focus:ring-0">
+              <SelectTrigger className="w-8 h-8 border-none bg-transparent text-white p-0.5 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all shadow-none">
                 <Bot className="w-4 h-4 text-white" />
               </SelectTrigger>
-              <SelectContent align="start" className="w-80">
-                {modelOptions.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
-                    <div className="flex flex-col gap-1 py-1">
-                      <div className="flex items-center gap-2">
+              <SelectContent align="start" className="w-96">
+                {/* Provider Tabs */}
+                <div className="flex border-b border-border/50 p-1 gap-1 sticky top-0 bg-popover">
+                  {['Google', 'Meta', 'OpenAI'].map((provider) => (
+                    <button
+                      key={provider}
+                      onClick={() => setSelectedProvider(provider as 'Google' | 'Meta' | 'OpenAI')}
+                      className={`flex-1 px-1 py-2 text-sm font-medium rounded-md transition-colors ${
+                        selectedProvider === provider
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                      }`}
+                    >
+                      {provider}
+                    </button>
+                  ))}
+                </div>
+                {/* Models for selected provider */}
+                <div className="max-h-80 overflow-y-auto">
+                  {modelsByProvider[selectedProvider]?.map((model) => (
+                    <SelectItem key={model.id} value={model.id} className="py-3">
+                      <div className="flex flex-col gap-1">
                         <span className="font-medium">{model.name}</span>
-                        {model.badge && (
-                          <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
-                            {model.badge}
-                          </Badge>
-                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {model.description}
+                        </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {model.description}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
+                    </SelectItem>
+                  ))}
+                </div>
               </SelectContent>
             </Select>
           }

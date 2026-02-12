@@ -1,35 +1,47 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Initialize Groq client using OpenAI package
-const groq = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: 'https://api.groq.com/openai/v1',
+// Initialize OpenRouter client using OpenAI package
+const openrouter = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: 'https://openrouter.io/api/v1',
 });
 
-// Model configurations for Groq
+// Model configurations for OpenRouter
 const modelConfigs = {
-  'openai/gpt-oss-120b': {
-    model: 'openai/gpt-oss-120b',
+  'google/gemma-3-4b-it:free': {
+    model: 'google/gemma-3-4b-it:free',
+    displayName: 'Gemma 3 4B',
+  },
+  'google/gemma-3-12b-it:free': {
+    model: 'google/gemma-3-12b-it:free',
+    displayName: 'Gemma 3 12B',
+  },
+  'google/gemma-3-27b-it:free': {
+    model: 'google/gemma-3-27b-it:free',
+    displayName: 'Gemma 3 27B',
+  },
+  'meta-llama/llama-3.2-3b-instruct:free': {
+    model: 'meta-llama/llama-3.2-3b-instruct:free',
+    displayName: 'Llama 3.2 3B',
+  },
+  'meta-llama/llama-3.3-70b-instruct:free': {
+    model: 'meta-llama/llama-3.3-70b-instruct:free',
+    displayName: 'Llama 3.3 70B',
+  },
+  'openai/gpt-oss-20b:free': {
+    model: 'openai/gpt-oss-20b:free',
+    displayName: 'GPT OSS 20B',
+  },
+  'openai/gpt-oss-120b:free': {
+    model: 'openai/gpt-oss-120b:free',
     displayName: 'GPT OSS 120B',
-  },
-  'llama-3.3-70b-versatile': {
-    model: 'llama-3.3-70b-versatile',
-    displayName: 'Llama 3.3 70B Versatile',
-  },
-  'moonshotai/kimi-k2-instruct': {
-    model: 'moonshotai/kimi-k2-instruct',
-    displayName: 'Kimi K2 Instruct',
-  },
-  'groq/compound-mini': {
-    model: 'groq/compound-mini',
-    displayName: 'Groq Compound Mini',
   }
 };
 
 export async function POST(req: Request) {
   try {
-    const { message, messages, model = 'openai/gpt-oss-120b' } = await req.json();
+    const { message, messages, model = 'google/gemma-3-4b-it:free' } = await req.json();
 
     // Support both single message (legacy) and conversation history (new)
     if (!message && (!messages || messages.length === 0)) {
@@ -39,9 +51,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Validate GROQ_API_KEY
-    if (!process.env.GROQ_API_KEY) {
-      console.error('GROQ_API_KEY is not set');
+    // Validate OPENROUTER_API_KEY
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.error('OPENROUTER_API_KEY is not set');
       return NextResponse.json(
         { error: 'API key not configured' },
         { status: 500 }
@@ -49,7 +61,7 @@ export async function POST(req: Request) {
     }
 
     // Get model configuration
-    const config = modelConfigs[model as keyof typeof modelConfigs] || modelConfigs['openai/gpt-oss-120b'];
+    const config = modelConfigs[model as keyof typeof modelConfigs] || modelConfigs['google/gemma-3-4b-it:free'];
     
     // Prepare messages for the API
     let apiMessages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
@@ -57,10 +69,7 @@ export async function POST(req: Request) {
     // System prompt for AI behavior
     const systemPrompt = {
       role: 'system' as const,
-      content: `You are app0, an intelligent and capable AI assistant.
-Your purpose is to provide clear, correct, and concise answers.
-
-General Behavior
+      content: `You are app0, a friendly and helpful AI assistant
 
 Always answer the user’s question directly and briefly. Avoid unnecessary wording.
 
@@ -134,8 +143,8 @@ You are here to assist, not to impress.`
       ];
     }
     
-    // Call Groq API using OpenAI package with conversation history
-    const chatCompletion = await groq.chat.completions.create({
+    // Call OpenRouter API using OpenAI package with conversation history
+    const chatCompletion = await openrouter.chat.completions.create({
       model: config.model,
       messages: apiMessages,
     });
