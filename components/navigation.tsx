@@ -13,10 +13,10 @@ export function Navigation() {
             href="https://github.com/cidopenup/app0"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center text-xl font-bold gap-2 hover:text-primary transition-all duration-200 hover:scale-105 group"
+            className="flex items-center text-xl font-bold gap-2 hover:text-primary transition-all duration-200"
           >
-            <div className="p-1.5 rounded-lg bg-primary/5 group-hover:bg-primary/10 transition-colors duration-200">
-              <Binary className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
+            <div className="p-1.5 rounded-lg bg-primary/10 transition-colors duration-200">
+              <Binary className="w-5 h-5 transition-transform duration-200" />
             </div>
             <span className="bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text">
               app0
@@ -27,25 +27,25 @@ export function Navigation() {
           <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base">
             <Link 
               href="/" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105 group"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 "
             >
-              <HomeIcon className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+              <HomeIcon className="w-4 h-4 transition-transform duration-200" />
               <span className="hidden sm:inline font-medium">Home</span>
             </Link>
             
             <Link 
               href="/chat" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105 group"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 "
             >
-              <MessageSquareText className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+              <MessageSquareText className="w-4 h-4 transition-transform duration-200" />
               <span className="hidden sm:inline font-medium">Chat</span>
             </Link>
             
             <Link 
               href="/chat/models" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105 group"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 "
             >
-              <Zap className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+              <Zap className="w-4 h-4 transition-transform duration-200" />
               <span className="hidden sm:inline font-medium">Models</span>
             </Link>
             

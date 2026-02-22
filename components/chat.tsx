@@ -270,7 +270,7 @@ export function Chat() {
                           message.role === 'user' ? 'flex-row-reverse max-w-[55%]' : 'w-full'
                         }`}
                       >
-                        <div className={`flex flex-col gap-1 w-full ${message.role === 'user' ? 'group' : ''}`}>
+                        <div className="flex flex-col gap-1 w-full group">
                           <div
                             className={`rounded-lg ${
                               message.role === 'user'
@@ -326,8 +326,10 @@ export function Chat() {
                           </div>
                           <button
                             onClick={() => handleCopy(message.content, i)}
-                            className={`text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 py-1 rounded hover:bg-muted/50 ${
-                              message.role === 'user' ? 'px-2 pt-2 self-end opacity-0 group-hover:opacity-100' : 'ml-2 px-4 self-start'
+                            className={`text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 py-1 px-2 pt-2 rounded hover:bg-muted/50 ${
+                              message.role === 'user'
+                                ? 'self-end opacity-0 group-hover:opacity-100'
+                                : 'self-start opacity-100 ml-2'
                             }`}
                             title="Copy message"
                           >
