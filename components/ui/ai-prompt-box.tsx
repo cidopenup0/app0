@@ -1,10 +1,8 @@
-﻿import React from "react";
+import React from "react";
 import { ArrowUp, Mic, MicOff } from "lucide-react";
 
 const cn = (...classes: (string | undefined | null | false)[]) =>
   classes.filter(Boolean).join(" ");
-
-// Auto-resizing textarea
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,
   React.TextareaHTMLAttributes<HTMLTextAreaElement>
@@ -30,7 +28,7 @@ const Textarea = React.forwardRef<
       rows={1}
       onScroll={onScroll}
       className={cn(
-        "flex w-full border-none bg-transparent px-3 py-2.5 text-base text-gray-100 placeholder:text-gray-400 focus-visible:outline-none resize-none overflow-y-auto",
+        "flex w-full border-none bg-transparent px-3 py-2.5 text-base text-gray-100 placeholder:text-gray-400 resize-none overflow-y-auto outline-none focus:outline-none",
         className
       )}
       {...props}
@@ -111,8 +109,6 @@ export const PromptInputBox = React.forwardRef<
         } finally {
           setIsTranscribing(false);
         }
-
-        // Stop all tracks to release the microphone
         stream.getTracks().forEach(track => track.stop());
       };
 
@@ -186,7 +182,6 @@ export const PromptInputBox = React.forwardRef<
         {leftSlot && <div className="flex items-center shrink-0">{leftSlot}</div>}
 
         <div className="flex items-center gap-2">
-          {/* Microphone button */}
           <button
             onClick={toggleRecording}
             disabled={isTranscribing}
@@ -209,7 +204,6 @@ export const PromptInputBox = React.forwardRef<
             )}
           </button>
 
-          {/* Submit button */}
           <button
             onClick={handleSubmit}
             disabled={!hasContent}

@@ -8,8 +8,6 @@ export async function POST(req: NextRequest) {
     if (!audioFile) {
       return NextResponse.json({ error: 'No audio file provided' }, { status: 400 });
     }
-
-    // Validate GROQ_API_KEY
     if (!process.env.GROQ_API_KEY) {
       console.error('GROQ_API_KEY is not set');
       return NextResponse.json(
@@ -17,12 +15,8 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-
-    // Convert audio file to base64 for direct API call
     const arrayBuffer = await audioFile.arrayBuffer();
     const base64Audio = Buffer.from(arrayBuffer).toString('base64');
-
-    // Use Groq API directly for whisper transcription
     const groqFormData = new FormData();
     groqFormData.append('file', audioFile);
     groqFormData.append('model', 'whisper-large-v3-turbo');

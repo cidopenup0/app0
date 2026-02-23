@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
-
-// Initialize OpenRouter client using OpenAI package
 const openrouter = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1',
@@ -10,8 +8,6 @@ const openrouter = new OpenAI({
     'X-Title': 'app0',
   },
 });
-
-// Model configurations for OpenRouter
 const modelConfigs = {
   'google/gemma-3-4b-it:free': {
     model: 'google/gemma-3-4b-it:free',
@@ -46,16 +42,12 @@ const modelConfigs = {
 export async function POST(req: Request) {
   try {
     const { message, messages, model = 'google/gemma-3-4b-it:free' } = await req.json();
-
-    // Support both single message (legacy) and conversation history (new)
     if (!message && (!messages || messages.length === 0)) {
       return NextResponse.json(
         { error: 'Message or messages array is required' },
         { status: 400 }
       );
     }
-
-    // Validate OPENROUTER_API_KEY
     if (!process.env.OPENROUTER_API_KEY) {
       console.error('OPENROUTER_API_KEY is not set');
       return NextResponse.json(
@@ -63,14 +55,8 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
-
-    // Get model configuration
     const config = modelConfigs[model as keyof typeof modelConfigs] || modelConfigs['google/gemma-3-4b-it:free'];
-    
-    // Prepare messages for the API
     let apiMessages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
-    
-    // System prompt for AI behavior
     const systemPrompt = {
       role: 'system' as const,
       content: `You are the helpful AI assistant.
@@ -109,7 +95,6 @@ export async function POST(req: Request) {
     };
     
     if (messages && Array.isArray(messages)) {
-      // Use the full conversation history with system prompt
       apiMessages = [
         systemPrompt,
         ...messages.map((msg: { role: 'user' | 'assistant'; content: string }) => ({
@@ -118,7 +103,6 @@ export async function POST(req: Request) {
         }))
       ];
     } else {
-      // Fallback to single message for backward compatibility with system prompt
       apiMessages = [
         systemPrompt,
         {
@@ -127,13 +111,9 @@ export async function POST(req: Request) {
         },
       ];
     }
-    
-    // Call OpenRouter API using fallback models if provider rate-limits (429)
     const chatCompletion = await createCompletionWithFallback(config.model, apiMessages);
 
     let aiResponse = chatCompletion.choices[0]?.message?.content || 'No response generated';
-
-    // Post-process the response to clean up formatting
     aiResponse = cleanResponse(aiResponse);
 
     return NextResponse.json({ response: aiResponse });
@@ -201,14 +181,9 @@ function isRateLimitError(error: unknown): boolean {
 
   return status === 429 || code === 429 || code === '429';
 }
-
-// Function to clean up AI response formatting
 function cleanResponse(text: string): string {
-  // Remove lines that start with `: ` (colon followed by space) - these are often explanatory notes
-  // but keep them if they're part of a longer paragraph
   const lines = text.split('\n');
   const cleanedLines = lines.map(line => {
-    // If line starts with `: ` and is standalone, convert to bullet point or remove colon
     if (line.trim().match(/^:\s+/)) {
       return line.replace(/^:\s+/, '- ');
     }

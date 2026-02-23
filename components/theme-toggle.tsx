@@ -27,15 +27,15 @@ export function ThemeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")} className="flex justify-between items-center">
           Light
-          {theme === "light" && <Check className="ml-4 w-4 h-4" />} {/* Increased ml for more space */}
+          {theme === "light" && <Check className="ml-4 w-4 h-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")} className="flex justify-between items-center">
           Dark
-          {theme === "dark" && <Check className="ml-4 w-4 h-4" />} {/* Increased ml for more space */}
+          {theme === "dark" && <Check className="ml-4 w-4 h-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")} className="flex justify-between items-center">
           System
-          {theme === "system" && <Check className="ml-4 w-4 h-4" />} {/* Increased ml for more space */}
+          {theme === "system" && <Check className="ml-4 w-4 h-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

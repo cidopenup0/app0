@@ -41,7 +41,6 @@ export default function ModelsPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-background to-muted p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <Link href="/chat">
             <Button variant="ghost" size="sm" className="mb-6 -ml-2">
@@ -55,21 +54,18 @@ export default function ModelsPage() {
           </p>
         </div>
 
-        {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
           </div>
         )}
 
-        {/* Error State */}
         {error && (
           <Card className="p-6 border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800">
             <p className="text-red-700 dark:text-red-200">Error: {error}</p>
           </Card>
         )}
 
-        {/* Models Grid */}
         {!loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {models.map((model) => (
@@ -108,7 +104,6 @@ export default function ModelsPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && !error && models.length === 0 && (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground mb-4">No models available</p>

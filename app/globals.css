@@ -93,9 +93,9 @@
     }
   }
 
-  /* Custom scrollbar styles that match the website vibe */
+  
   @layer base {
-    /* Webkit browsers (Chrome, Safari, Edge) */
+    
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -124,12 +124,12 @@
       background: transparent;
     }
 
-    /* Firefox */
+    
     * {
       scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
     }
 
-    /* Dark theme adjustments */
+    
     .dark ::-webkit-scrollbar-thumb {
       background: hsl(var(--muted-foreground) / 0.4);
     }
@@ -151,7 +151,7 @@
     background: transparent !important;
   }
 
-  /* Markdown Content Styling */
+  
   .assistant-message-wrapper {
     color: hsl(var(--foreground));
   }
@@ -160,7 +160,7 @@
     color: #e8e8e8;
   }
 
-  /* Table wrapper for horizontal scroll */
+  
   .assistant-message-wrapper table {
     display: block;
     max-width: 100%;
@@ -381,7 +381,7 @@
     color: #d0d0d0;
   }
 
-  /* Message Actions */
+  
   .assistant-message-wrapper {
     position: relative;
     padding-bottom: 0.5rem;

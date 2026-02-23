@@ -139,8 +139,6 @@ export function Chat() {
     const match = /language-(\w+)/.exec(className || '');
     const language = match ? match[1] : '';
     const codeId = `${language}-${codeString.substring(0, 20)}`;
-
-    // Inline code style
     if (inline || !match) {
       return (
         <code
@@ -206,7 +204,6 @@ export function Chat() {
     setIsLoading(true);
 
     try {
-      // Send the entire conversation history for context
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -377,7 +374,6 @@ export function Chat() {
         </div>
       </div>
 
-      {/* Scroll to bottom button */}
       {showScrollButton && (
         <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-10">
           <button
@@ -390,7 +386,6 @@ export function Chat() {
         </div>
       )}
 
-      {/* Fixed floating input box */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4">
         <PromptInputBox
           onSend={handleSend}
@@ -400,9 +395,8 @@ export function Chat() {
               <SelectTrigger className="w-8 h-8 border-none bg-transparent text-white p-0.5 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all shadow-none">
                 <Bot className="w-4 h-4 text-white" />
               </SelectTrigger>
-              <SelectContent align="start" className="w-96">
-                {/* Provider Tabs */}
-                <div className="flex border-b border-border/50 p-1 gap-1 sticky top-0 bg-popover">
+              <SelectContent align="start" className="w-[min(24rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)]">
+                <div className="flex border-b border-border/50 p-1 sticky top-0 bg-popover">
                   {['Google', 'Meta', 'OpenAI'].map((provider) => (
                     <button
                       key={provider}
@@ -417,7 +411,6 @@ export function Chat() {
                     </button>
                   ))}
                 </div>
-                {/* Models for selected provider */}
                 <div className="max-h-80 overflow-y-auto">
                   {modelsByProvider[selectedProvider]?.map((model) => (
                     <SelectItem key={model.id} value={model.id} className="py-3">
