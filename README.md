@@ -8,7 +8,6 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000.svg?style=flat&logo=Next.js&logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
 <img alt="React" src="https://img.shields.io/badge/React-61DAFB.svg?style=flat&logo=React&logoColor=black" class="inline-block mx-1" style="margin: 0px 2px;">
 <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=flat&logo=TypeScript&logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
-<img alt="Groq" src="https://img.shields.io/badge/Groq-000000.svg?style=flat&logo=Groq&logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
 <img alt="OpenRouter" src="https://img.shields.io/badge/OpenRouter-000000.svg?style=flat&logo=OpenRouter&logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
 <br>
 <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-38B2AC.svg?style=flat&logo=Tailwind%20CSS&logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
@@ -28,7 +27,8 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 
 ### 🎙️ **Voice Input**
 - **Click-to-Record**: Simple microphone button for hands-free input
-- **Real-time Transcription**: Powered by Groq Whisper large-v3-turbo
+- **Browser-native Speech Recognition**: Uses built-in Web Speech API (no server transcription)
+- **Language Selection**: Supports English, Hindi, Kannada, Telugu, and Tamil
 - **Error Handling**: Clear feedback if transcription fails
 - **Seamless Integration**: Transcribed text appears instantly in chat
 
@@ -78,10 +78,6 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
    # OpenRouter API Key (for all chat models)
    # Get it from: https://openrouter.io/keys
    OPENROUTER_API_KEY=your_openrouter_key_here
-   
-   # Groq API Key (for speech-to-text)
-   # Get it from: https://console.groq.com/keys
-   GROQ_API_KEY=your_groq_key_here
 
   # Clerk auth in keyless mode works with no auth env vars in development.
   # Optional if you want to connect your own Clerk instance:
@@ -103,7 +99,7 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 2. Click the bot icon to select a model and provider
 3. Type your question in the input box
 4. Press `Enter` or click the send button
-5. Click the microphone for voice input
+5. Choose voice language and click the microphone for voice input
 
 ### Browse Models
 - Visit `/chat/models` to see all available models
@@ -116,11 +112,11 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 app0/
 ├── app/
 │   ├── api/
+│   │   ├── clerk/              # Clerk auth helpers (middleware/auth)
 │   │   ├── chat/               # Chat API endpoint
 │   │   │   ├── route.ts        # Chat completions
 │   │   │   └── models/
 │   │   │       └── route.ts    # List available models
-│   │   └── speech-to-text/     # Whisper transcription endpoint
 │   ├── chat/
 │   │   ├── page.tsx            # Chat interface
 │   │   └── models/
@@ -132,6 +128,7 @@ app0/
 │   ├── chat.tsx                # Main chat component
 │   ├── navigation.tsx          # Top navigation bar
 │   └── ui/                     # Reusable components (Radix UI based)
+├── proxy.ts                    # Clerk middleware entrypoint
 └── lib/
     └── utils.ts                # Utility functions
 ```
@@ -152,7 +149,9 @@ Send a message and get an AI response.
 **Response:**
 ```json
 {
-  "response": "JavaScript is a programming language..."
+  "response": "JavaScript is a programming language...",
+  "model": "openai/gpt-oss-120b:free",
+  "modelDisplayName": "GPT OSS 120B"
 }
 ```
 
@@ -173,12 +172,6 @@ Get list of all available models.
   "total": 8
 }
 ```
-
-### `POST /api/speech-to-text`
-Convert audio to text.
-
-**Request:** FormData with audio file
-**Response:** `{ "text": "transcribed text here" }`
 
 ## 🎨 Customization
 
@@ -206,7 +199,6 @@ Update `app/api/chat/models/route.ts` and `components/chat.tsx`:
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENROUTER_API_KEY` | Yes | OpenRouter API key for chat models |
-| `GROQ_API_KEY` | Yes | Groq API key for speech-to-text |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Optional | Clerk publishable key (not required in keyless dev mode) |
 | `CLERK_SECRET_KEY` | Optional | Clerk secret key (not required in keyless dev mode) |
 
@@ -216,7 +208,6 @@ Update `app/api/chat/models/route.ts` and `components/chat.tsx`:
 
 Set environment variables in Vercel dashboard:
 - `OPENROUTER_API_KEY`
-- `GROQ_API_KEY`
 
 ### Deploy to Other Platforms
 
