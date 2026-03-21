@@ -151,6 +151,21 @@
     background: transparent !important;
   }
 
+  .cl-modalBackdrop {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px !important;
+  }
+
+  .cl-modalContent {
+    margin: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+  }
+
   
   .assistant-message-wrapper {
     color: hsl(var(--foreground));

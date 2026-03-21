@@ -1,15 +1,28 @@
+"use client";
+
 import Link from "next/link";
-import { MessageSquareText, Binary, HomeIcon, Zap } from 'lucide-react';
+import { useMemo } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Binary } from 'lucide-react';
 import ThemeSwitchCircular from "./ui/theme-switch-circular";
+import { Show, SignInButton, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 export function Navigation() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentPath = useMemo(() => {
+    const query = searchParams.toString();
+    return `${pathname}${query ? `?${query}` : ""}`;
+  }, [pathname, searchParams]);
+
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-y-4">
           <Link
-            href="https://github.com/cidopenup/app0"
-            target="_blank"
+            href="/"
             rel="noopener noreferrer"
             className="flex items-center text-xl font-bold gap-2 hover:text-primary transition-all duration-200"
           >
@@ -22,34 +35,24 @@ export function Navigation() {
           </Link>
 
           <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base">
-            <Link 
-              href="/" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 "
-            >
-              <HomeIcon className="w-4 h-4 transition-transform duration-200" />
-              <span className="hidden sm:inline font-medium">Home</span>
-            </Link>
-            
-            <Link 
-              href="/chat" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 "
-            >
-              <MessageSquareText className="w-4 h-4 transition-transform duration-200" />
-              <span className="hidden sm:inline font-medium">Chat</span>
-            </Link>
-            
-            <Link 
-              href="/chat/models" 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200 "
-            >
-              <Zap className="w-4 h-4 transition-transform duration-200" />
-              <span className="hidden sm:inline font-medium">Models</span>
-            </Link>
-            
             <div className="ml-1">
               <ThemeSwitchCircular />
             </div>
 
+            <Show when="signed-out">
+              <div className="flex items-center gap-2">
+                <SignInButton
+                  mode="modal"
+                  forceRedirectUrl={currentPath}
+                  fallbackRedirectUrl={currentPath}
+                >
+                  <Button size="sm" variant="outline">Sign in</Button>
+                </SignInButton>
+              </div>
+            </Show>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
           </div>
         </div>
       </div>

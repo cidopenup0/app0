@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { ArrowRight, Binary, CheckCircle2, Code2, Mic, Shield, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Code2, Mic, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { HomePageWithAuth } from './home-page-auth';
 
 export function HomePage() {
   return (
@@ -170,4 +171,4 @@ export function HomePage() {
   );
 }
 
-export default HomePage;
+export default HomePageWithAuth;
