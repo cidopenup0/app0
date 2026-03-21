@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useRef } from "react"
+import { Suspense, useEffect, useMemo, useRef } from "react"
 import { useAuth, useClerk } from "@clerk/nextjs"
 import { HomePage } from "./page"
 
@@ -13,6 +13,14 @@ function resolveSafeRedirect(rawValue: string | null): string {
 }
 
 export function HomePageWithAuth() {
+  return (
+    <Suspense fallback={<HomePage />}>
+      <HomePageWithAuthContent />
+    </Suspense>
+  )
+}
+
+function HomePageWithAuthContent() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { Inter } from 'next/font/google'
 import { ClerkProvider } from "@clerk/nextjs"
 import { ui } from "@clerk/ui"
@@ -28,7 +29,9 @@ export default function RootLayout({
         <ClerkProvider ui={ui}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="min-h-[100dvh] flex flex-col">
-              <Navigation />
+              <Suspense fallback={null}>
+                <Navigation />
+              </Suspense>
               <main className="flex-1 relative">
                 {children}
               </main>

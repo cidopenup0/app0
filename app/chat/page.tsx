@@ -2,10 +2,27 @@
 
 import { useAuth } from "@clerk/nextjs"
 import { Chat } from "@/components/chat"
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 export default function ChatPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[calc(100vh-60px)]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <ChatPageContent />
+    </Suspense>
+  )
+}
+
+function ChatPageContent() {
   const { isLoaded, userId } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
