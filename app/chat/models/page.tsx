@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -15,9 +15,19 @@ interface Model {
 }
 
 export default function ModelsPage() {
+  const router = useRouter();
   const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    router.push('/chat');
+  };
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -42,12 +52,10 @@ export default function ModelsPage() {
     <main className="min-h-screen bg-gradient-to-br from-background to-muted p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <Link href="/chat">
-            <Button variant="ghost" size="sm" className="mb-6 -ml-2">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Chat
-            </Button>
-          </Link>
+          <Button variant="ghost" size="sm" className="mb-6 -ml-2" onClick={handleBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Available Models</h1>
           <p className="text-muted-foreground text-lg">
             Choose from these powerful AI models for your conversations
@@ -107,9 +115,7 @@ export default function ModelsPage() {
         {!loading && !error && models.length === 0 && (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground mb-4">No models available</p>
-            <Link href="/chat">
-              <Button>Back to Chat</Button>
-            </Link>
+            <Button onClick={handleBack}>Back</Button>
           </Card>
         )}
       </div>

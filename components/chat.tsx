@@ -12,6 +12,7 @@ import remarkGfm from 'remark-gfm';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  modelName?: string;
 }
 
 interface ModelOption {
@@ -81,6 +82,10 @@ export function Chat() {
   ];
   
   const modelOptions = allModels;
+
+  const getModelDisplayName = (modelId: string) => {
+    return modelOptions.find((m) => m.id === modelId)?.name || modelId;
+  };
   
   const modelsByProvider = {
     Google: allModels.filter(m => m.provider === 'Google').sort((a, b) => a.name.localeCompare(b.name)),
@@ -142,7 +147,7 @@ export function Chat() {
     if (inline || !match) {
       return (
         <code
-          className="px-1.5 py-0.5 rounded-md bg-[#1e1e1e] text-blue-150 text-sm font-mono"
+          className="assistant-inline-code px-2 py-1 rounded-md text-sm font-mono"
           {...props}
         >
           {children}
@@ -217,7 +222,14 @@ export function Chat() {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.response }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: data.response,
+          modelName: data.modelDisplayName || (data.model ? getModelDisplayName(data.model) : getModelDisplayName(selectedModel)),
+        },
+      ]);
     } catch (error) {
       console.error('Error:', error);
       setMessages((prev) => [
@@ -321,21 +333,33 @@ export function Chat() {
                               )}
                             </div>
                           </div>
-                          <button
-                            onClick={() => handleCopy(message.content, i)}
-                            className={`text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 py-1 px-2 pt-2 rounded hover:bg-muted/50 ${
+                          <div
+                            className={`flex items-center gap-2 ${
                               message.role === 'user'
                                 ? 'self-end opacity-0 group-hover:opacity-100'
                                 : 'self-start opacity-100 ml-2'
                             }`}
-                            title="Copy message"
                           >
-                            {copiedIndex === i ? (
-                              <Check className="w-3.5 h-3.5 text-green-500" />
-                            ) : (
-                              <Copy className="w-3.5 h-3.5" />
+                            {message.role === 'assistant' && message.modelName && (
+                              <span className="text-[11px] text-muted-foreground">
+                                Response by {message.modelName}
+                              </span>
                             )}
-                          </button>
+                            {message.role === 'assistant' && message.modelName && (
+                              <span className="text-[11px] text-muted-foreground/70">•</span>
+                            )}
+                            <button
+                              onClick={() => handleCopy(message.content, i)}
+                              className="text-xs text-muted-foreground hover:text-foreground transition-colors hover:bg-muted/50"
+                              title="Copy message"
+                            >
+                              {copiedIndex === i ? (
+                                <span>Copied</span>
+                              ) : (
+                                <span>Copy</span>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -393,7 +417,7 @@ export function Chat() {
           leftSlot={
             <Select value={selectedModel} onValueChange={setSelectedModel}>
               <SelectTrigger className="w-8 h-8 border-none bg-transparent text-white p-0.5 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all shadow-none">
-                <Bot className="w-4 h-4 text-white" />
+                <Bot className="w-4 h-4 text-white pr-0.5" />
               </SelectTrigger>
               <SelectContent align="start" className="w-[min(24rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)]">
                 <div className="flex border-b border-border/50 p-1 sticky top-0 bg-popover">

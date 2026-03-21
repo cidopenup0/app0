@@ -1,5 +1,60 @@
 import React from "react";
 import { ArrowUp, Mic, MicOff } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type SpeechRecognitionAlternative = {
+  transcript: string;
+};
+
+type SpeechRecognitionResultLike = {
+  isFinal: boolean;
+  0: SpeechRecognitionAlternative;
+};
+
+type SpeechRecognitionEventLike = {
+  resultIndex: number;
+  results: ArrayLike<SpeechRecognitionResultLike>;
+};
+
+type SpeechRecognitionErrorEventLike = {
+  error: string;
+  message?: string;
+};
+
+type BrowserSpeechRecognition = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+  onend: (() => void) | null;
+};
+
+type SpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
+
+type WindowWithSpeechRecognition = Window & {
+  SpeechRecognition?: SpeechRecognitionConstructor;
+  webkitSpeechRecognition?: SpeechRecognitionConstructor;
+};
+
+type SpeechLocale = "hi-IN" | "en-IN" | "kn-IN" | "te-IN" | "ta-IN";
+
+const speechLocaleOptions: Array<{ code: SpeechLocale; label: string; short: string }> = [
+  { code: "en-IN", label: "English (India)", short: "EN" },
+  { code: "kn-IN", label: "Kannada (India)", short: "ಕನ್ನಡ" },
+  { code: "hi-IN", label: "Hindi (India)", short: "हिंदी" },
+  { code: "te-IN", label: "Telugu (India)", short: "తెలుగు" },
+  { code: "ta-IN", label: "Tamil (India)", short: "தமிழ்" },
+];
 
 const cn = (...classes: (string | undefined | null | false)[]) =>
   classes.filter(Boolean).join(" ");
@@ -51,9 +106,16 @@ export const PromptInputBox = React.forwardRef<
   const [isRecording, setIsRecording] = React.useState(false);
   const [isTranscribing, setIsTranscribing] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [speechLocale, setSpeechLocale] = React.useState<SpeechLocale>("hi-IN");
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
-  const audioChunksRef = React.useRef<Blob[]>([]);
+  const recognitionRef = React.useRef<BrowserSpeechRecognition | null>(null);
+  const transcriptBufferRef = React.useRef("");
+
+  const isSpeechRecognitionSupported = React.useMemo(() => {
+    if (typeof window === "undefined") return false;
+    const speechWindow = window as WindowWithSpeechRecognition;
+    return Boolean(speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition);
+  }, []);
 
   const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget;
@@ -67,61 +129,138 @@ export const PromptInputBox = React.forwardRef<
     }
   }, [input]);
 
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const preferred = [navigator.language, ...(navigator.languages || [])]
+      .map((lang) => lang?.toLowerCase())
+      .find(Boolean);
+
+    if (!preferred) {
+      setSpeechLocale("en-IN");
+      return;
+    }
+
+    if (preferred.startsWith("kn")) {
+      setSpeechLocale("kn-IN");
+      return;
+    }
+
+    if (preferred.startsWith("te")) {
+      setSpeechLocale("te-IN");
+      return;
+    }
+
+    if (preferred.startsWith("ta")) {
+      setSpeechLocale("ta-IN");
+      return;
+    }
+
+    if (preferred.startsWith("hi")) {
+      setSpeechLocale("hi-IN");
+      return;
+    }
+
+    setSpeechLocale("en-IN");
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
   const startRecording = async () => {
+    if (!isSpeechRecognitionSupported) {
+      setError("Browser speech recognition is not supported here.");
+      setTimeout(() => setError(null), 4000);
+      return;
+    }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
+      const speechWindow = window as WindowWithSpeechRecognition;
+      const SpeechRecognitionImpl =
+        speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
 
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
+      if (!SpeechRecognitionImpl) {
+        throw new Error("Speech recognition is unavailable.");
+      }
 
-      mediaRecorder.onstop = async () => {
-        setIsTranscribing(true);
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        
-        try {
-          const formData = new FormData();
-          formData.append('audio', audioBlob, 'recording.wav');
+      setError(null);
+      setIsTranscribing(false);
+      transcriptBufferRef.current = "";
 
-          const response = await fetch('/api/speech-to-text', {
-            method: 'POST',
-            body: formData,
-          });
+      const recognition = new SpeechRecognitionImpl();
+      recognition.lang = speechLocale;
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`API error: ${response.status} - ${errorData.error}`);
+      recognition.onresult = (event) => {
+        let finalizedText = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i += 1) {
+          const result = event.results[i];
+          const transcript = result?.[0]?.transcript?.trim();
+          if (!transcript) continue;
+
+          if (result.isFinal) {
+            finalizedText += `${finalizedText ? " " : ""}${transcript}`;
           }
-
-          const data = await response.json();
-          
-          if (data.text) {
-            setInput(prev => prev + (prev ? ' ' : '') + data.text);
-          }
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to transcribe audio';
-          console.error('Transcription error:', error);
-          setError(errorMessage);
-          setTimeout(() => setError(null), 5000);
-        } finally {
-          setIsTranscribing(false);
         }
-        stream.getTracks().forEach(track => track.stop());
+
+        if (finalizedText) {
+          transcriptBufferRef.current = `${transcriptBufferRef.current} ${finalizedText}`.trim();
+        }
       };
 
-      mediaRecorder.start();
+      recognition.onerror = (event) => {
+        const recognizedError = event.error || "unknown";
+        if (recognizedError !== "aborted") {
+          const message =
+            recognizedError === "not-allowed"
+              ? "Microphone access was blocked. Please allow microphone permissions."
+              : `Speech recognition failed (${recognizedError}).`;
+          setError(message);
+          setTimeout(() => setError(null), 5000);
+        }
+        setIsRecording(false);
+        setIsTranscribing(false);
+      };
+
+      recognition.onend = () => {
+        const transcript = transcriptBufferRef.current.trim();
+        if (transcript) {
+          setInput((prev) => `${prev}${prev ? " " : ""}${transcript}`);
+        }
+
+        transcriptBufferRef.current = "";
+        recognitionRef.current = null;
+        setIsRecording(false);
+        setIsTranscribing(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Error starting recording:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Could not start browser speech recognition.";
+      setError(errorMessage);
+      setTimeout(() => setError(null), 5000);
+      setIsRecording(false);
+      setIsTranscribing(false);
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
+    if (recognitionRef.current && isRecording) {
+      setIsTranscribing(true);
+      recognitionRef.current.stop();
       setIsRecording(false);
     }
   };
@@ -142,6 +281,8 @@ export const PromptInputBox = React.forwardRef<
   };
 
   const hasContent = input.trim() !== "";
+  const selectedSpeechOption =
+    speechLocaleOptions.find((option) => option.code === speechLocale) ?? speechLocaleOptions[0];
 
   return (
     <div
@@ -182,9 +323,33 @@ export const PromptInputBox = React.forwardRef<
         {leftSlot && <div className="flex items-center shrink-0">{leftSlot}</div>}
 
         <div className="flex items-center gap-2">
+          <Select
+            value={speechLocale}
+            onValueChange={(value) => setSpeechLocale(value as SpeechLocale)}
+            disabled={isRecording || isTranscribing}
+          >
+            <SelectTrigger
+              title={`Speech language: ${selectedSpeechOption.label}`}
+              className={cn(
+                "h-8 w-[76px] shrink-0 rounded-lg border border-white/10 px-2 text-xs font-semibold tracking-wide",
+                "bg-[#2b2b2b] text-gray-200 hover:bg-[#353535] hover:text-white",
+                "focus:ring-0 focus:ring-offset-0",
+                "data-[placeholder]:text-gray-300"
+              )}
+            >
+              <SelectValue>{selectedSpeechOption.short}</SelectValue>
+            </SelectTrigger>
+            <SelectContent align="end" className="min-w-[190px]">
+              {speechLocaleOptions.map((option) => (
+                <SelectItem key={option.code} value={option.code} className="text-sm">
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <button
             onClick={toggleRecording}
-            disabled={isTranscribing}
             className={cn(
               "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200",
               isRecording
@@ -193,7 +358,15 @@ export const PromptInputBox = React.forwardRef<
                 ? "bg-yellow-500 text-white cursor-not-allowed"
                 : "bg-white/10 hover:bg-white/20 text-gray-400 hover:text-white"
             )}
-            title={isRecording ? "Stop recording" : isTranscribing ? "Transcribing..." : "Start voice recording"}
+            title={
+              isRecording
+                ? "Stop listening"
+                : isTranscribing
+                ? "Finalizing speech..."
+                : isSpeechRecognitionSupported
+                ? `Start voice input (${speechLocaleOptions.find((item) => item.code === speechLocale)?.label || speechLocale})`
+                : "Speech recognition is not supported in this browser"
+            }
           >
             {isTranscribing ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

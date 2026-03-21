@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { auth } from '@clerk/nextjs/server';
+import { requireAuthResponse } from '../clerk/auth';
 const openrouter = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1',
@@ -42,13 +42,9 @@ const modelConfigs = {
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const unauthorized = await requireAuthResponse();
+    if (unauthorized) {
+      return unauthorized;
     }
 
     const { message, messages, model = 'google/gemma-3-4b-it:free' } = await req.json();
@@ -121,12 +117,22 @@ export async function POST(req: Request) {
         },
       ];
     }
-    const chatCompletion = await createCompletionWithFallback(config.model, apiMessages);
+    const { completion, usedModel } = await createCompletionWithFallback(config.model, apiMessages);
 
-    let aiResponse = chatCompletion.choices[0]?.message?.content || 'No response generated';
+    const aiResponseRaw = completion?.choices?.[0]?.message?.content;
+    let aiResponse = typeof aiResponseRaw === 'string' && aiResponseRaw.trim()
+      ? aiResponseRaw
+      : 'No response generated';
     aiResponse = cleanResponse(aiResponse);
 
-    return NextResponse.json({ response: aiResponse });
+    const usedModelDisplayName =
+      modelConfigs[usedModel as keyof typeof modelConfigs]?.displayName || usedModel;
+
+    return NextResponse.json({
+      response: aiResponse,
+      model: usedModel,
+      modelDisplayName: usedModelDisplayName,
+    });
   } catch (error) {
     console.error('Error:', error);
 
@@ -157,6 +163,7 @@ async function createCompletionWithFallback(
 
   const tried = new Set<string>();
   let lastRateLimitError: unknown;
+  let lastRecoverableError: unknown;
 
   for (const modelName of fallbackOrder) {
     if (tried.has(modelName)) {
@@ -165,20 +172,54 @@ async function createCompletionWithFallback(
     tried.add(modelName);
 
     try {
-      return await openrouter.chat.completions.create({
+      const modelMessages = adaptMessagesForModel(modelName, apiMessages);
+
+      const completion = await openrouter.chat.completions.create({
         model: modelName,
-        messages: apiMessages,
+        messages: modelMessages,
       });
+
+      return {
+        completion,
+        usedModel: modelName,
+      };
     } catch (error) {
       if (isRateLimitError(error)) {
         lastRateLimitError = error;
         continue;
       }
+
+      if (isRecoverableProviderError(error)) {
+        lastRecoverableError = error;
+        continue;
+      }
+
       throw error;
     }
   }
 
-  throw lastRateLimitError ?? new Error('All fallback models failed');
+  throw lastRateLimitError ?? lastRecoverableError ?? new Error('All fallback models failed');
+}
+
+function adaptMessagesForModel(
+  modelName: string,
+  apiMessages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>
+) {
+  if (!modelName.startsWith('google/gemma-')) {
+    return apiMessages;
+  }
+
+  const [first, ...rest] = apiMessages;
+  if (!first || first.role !== 'system') {
+    return apiMessages;
+  }
+
+  const systemAsUserInstruction = {
+    role: 'user' as const,
+    content: `Follow these instructions for all responses:\n\n${first.content}`,
+  };
+
+  return [systemAsUserInstruction, ...rest];
 }
 
 function isRateLimitError(error: unknown): boolean {
@@ -191,6 +232,25 @@ function isRateLimitError(error: unknown): boolean {
 
   return status === 429 || code === 429 || code === '429';
 }
+
+function isRecoverableProviderError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const status = (error as { status?: number }).status;
+  const code = (error as { code?: number | string }).code;
+  const raw = ((error as {
+    error?: { metadata?: { raw?: string } }
+  }).error?.metadata?.raw || '').toLowerCase();
+
+  if (status === 400 || code === 400 || code === '400') {
+    return raw.includes('developer instruction is not enabled');
+  }
+
+  return false;
+}
+
 function cleanResponse(text: string): string {
   const lines = text.split('\n');
   const cleanedLines = lines.map(line => {
