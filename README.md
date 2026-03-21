@@ -1,4 +1,4 @@
-# app0 - Simple AI Chat for Everyday Questions
+# app0`
 
 A clean, focused chat application powered by AI. Ask questions, speak your queries, and get clear answers. Built with Next.js, React, and TypeScript for an optimal experience.
 
@@ -16,7 +16,7 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 
 ## ✨ Features
 
-### 🗨️ **Multi-Model AI Chat**
+### **Multi-Model AI Chat**
 - **8 Powerful Models** via OpenRouter:
   - **Google**: Gemma 3 4B, 12B, 27B
   - **Meta**: Llama 3.2 3B, Llama 3.3 70B
@@ -25,14 +25,14 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 - **Smooth Model Switching**: Change models mid-conversation
 - **Full Conversation Context**: Models get complete chat history for better responses
 
-### 🎙️ **Voice Input**
+### **Voice Input**
 - **Click-to-Record**: Simple microphone button for hands-free input
 - **Browser-native Speech Recognition**: Uses built-in Web Speech API (no server transcription)
 - **Language Selection**: Supports English, Hindi, Kannada, Telugu, and Tamil
 - **Error Handling**: Clear feedback if transcription fails
 - **Seamless Integration**: Transcribed text appears instantly in chat
 
-### 🎨 **Modern Interface**
+### **Modern Interface**
 - **Dark/Light Mode**: Toggle themes with circular theme switcher
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile
 - **Clean Typography**: Easy-to-read responses with markdown support
@@ -41,13 +41,13 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
 
 ## 🚀 Getting Started
 
-### 📋 Prerequisites
+### Prerequisites
 
 - **Node.js** v18+ ([Get it here](https://nodejs.org/))
-- **npm** or **yarn** package manager
+- **npm** package manager
 - **Git** for cloning
 
-### 🛠️ Installation
+### Installation
 
 1. **Clone the repository**
    ```bash
@@ -77,12 +77,14 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
    ```env
    # OpenRouter API Key (for all chat models)
    # Get it from: https://openrouter.io/keys
+
    OPENROUTER_API_KEY=your_openrouter_key_here
 
-  # Clerk auth in keyless mode works with no auth env vars in development.
-  # Optional if you want to connect your own Clerk instance:
-  # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-  # CLERK_SECRET_KEY=your_clerk_secret_key
+   # Clerk auth in keyless mode works with no auth env vars in development.
+   # Optional if you want to connect your own Clerk instance:
+   
+   # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   # CLERK_SECRET_KEY=your_clerk_secret_key
    ```
 
 5. **Start the development server**
@@ -135,92 +137,8 @@ app0/
 
 ## 🔌 API Endpoints
 
-### `POST /api/chat`
+#### `POST /api/chat`
 Send a message and get an AI response.
 
-**Request:**
-```json
-{
-  "messages": [{"role": "user", "content": "What is JavaScript?"}],
-  "model": "openai/gpt-oss-120b:free"
-}
-```
-
-**Response:**
-```json
-{
-  "response": "JavaScript is a programming language...",
-  "model": "openai/gpt-oss-120b:free",
-  "modelDisplayName": "GPT OSS 120B"
-}
-```
-
-### `GET /api/chat/models`
-Get list of all available models.
-
-**Response:**
-```json
-{
-  "models": [
-    {
-      "id": "google/gemma-3-4b-it:free",
-      "name": "Gemma 3 4B",
-      "description": "Fast and efficient for everyday questions",
-      "provider": "Google"
-    }
-  ],
-  "total": 8
-}
-```
-
-## 🎨 Customization
-
-### Change Default Model
-Edit `components/chat.tsx`:
-```typescript
-const [selectedModel, setSelectedModel] = useState('model-id-here');
-```
-
-### Add New Models
-Update `app/api/chat/models/route.ts` and `components/chat.tsx`:
-```typescript
-{
-  id: 'provider/model-name:free',
-  name: 'Display Name',
-  description: 'Model description',
-  provider: 'Provider Name',
-}
-```
-
-## 📝 Configuration
-
-### Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `OPENROUTER_API_KEY` | Yes | OpenRouter API key for chat models |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Optional | Clerk publishable key (not required in keyless dev mode) |
-| `CLERK_SECRET_KEY` | Optional | Clerk secret key (not required in keyless dev mode) |
-
-## 🚀 Deployment
-
-### Deploy to Vercel (Recommended)
-
-Set environment variables in Vercel dashboard:
-- `OPENROUTER_API_KEY`
-
-### Deploy to Other Platforms
-
-The app is a standard Next.js project. Deploy to:
-- Netlify
-- Railway
-- Render
-
-> Make sure to set environment variables in your hosting platform.
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-- Report bugs
-- Suggest features
-- Submit pull requests
+#### `GET /api/chat/models`
+Get list of all models being used in this project.
