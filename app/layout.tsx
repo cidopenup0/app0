@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from 'next/font/google'
+import { ClerkProvider } from "@clerk/nextjs"
+import { ui } from "@clerk/ui"
 import "./globals.css"
 import { Navigation } from "@/components/navigation"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -23,14 +25,16 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
       </head>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-[100dvh] flex flex-col">
-            <Navigation />
-            <main className="flex-1 relative">
-              {children}
-            </main>
-          </div>
-        </ThemeProvider>
+        <ClerkProvider ui={ui}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="min-h-[100dvh] flex flex-col">
+              <Navigation />
+              <main className="flex-1 relative">
+                {children}
+              </main>
+            </div>
+          </ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   )

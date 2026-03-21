@@ -82,6 +82,11 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
    # Groq API Key (for speech-to-text)
    # Get it from: https://console.groq.com/keys
    GROQ_API_KEY=your_groq_key_here
+
+  # Clerk auth in keyless mode works with no auth env vars in development.
+  # Optional if you want to connect your own Clerk instance:
+  # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+  # CLERK_SECRET_KEY=your_clerk_secret_key
    ```
 
 5. **Start the development server**
@@ -127,15 +132,8 @@ app0/
 │   ├── chat.tsx                # Main chat component
 │   ├── navigation.tsx          # Top navigation bar
 │   └── ui/                     # Reusable components (Radix UI based)
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── select.tsx
-│       ├── theme-switch-circular.tsx
-│       └── ... (30+ UI components)
-├── lib/
-│   └── utils.ts                # Utility functions
-└── hooks/
-    └── use-mobile.tsx          # Mobile detection hook
+└── lib/
+    └── utils.ts                # Utility functions
 ```
 
 ## 🔌 API Endpoints
@@ -209,6 +207,8 @@ Update `app/api/chat/models/route.ts` and `components/chat.tsx`:
 |----------|----------|-------------|
 | `OPENROUTER_API_KEY` | Yes | OpenRouter API key for chat models |
 | `GROQ_API_KEY` | Yes | Groq API key for speech-to-text |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Optional | Clerk publishable key (not required in keyless dev mode) |
+| `CLERK_SECRET_KEY` | Optional | Clerk secret key (not required in keyless dev mode) |
 
 ## 🚀 Deployment
 

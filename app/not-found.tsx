@@ -5,12 +5,6 @@ import { Button } from '@/components/ui/button';
 export default function NotFound() {
   return (
     <div className="relative flex min-h-[calc(100vh-73px)] items-center justify-center overflow-hidden px-6">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-16 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
-        <div className="absolute bottom-10 right-10 h-48 w-48 rounded-full bg-accent/20 blur-2xl" />
-        <div className="absolute left-12 top-1/2 h-28 w-28 rounded-full bg-muted blur-2xl" />
-      </div>
-
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center text-center">
 
         <h1 className="mb-2 text-8xl font-black tracking-tight sm:text-9xl">
