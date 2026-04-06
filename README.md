@@ -1,4 +1,4 @@
-# app0`
+# app0
 
 A clean, focused chat application powered by AI. Ask questions, speak your queries, and get clear answers. Built with Next.js, React, and TypeScript for an optimal experience.
 
