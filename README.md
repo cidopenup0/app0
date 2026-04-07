@@ -83,8 +83,8 @@ A clean, focused chat application powered by AI. Ask questions, speak your queri
    # Clerk auth in keyless mode works with no auth env vars in development.
    # Optional if you want to connect your own Clerk instance:
    
-   # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   # CLERK_SECRET_KEY=your_clerk_secret_key
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
    ```
 
 5. **Start the development server**
